@@ -1,0 +1,13 @@
+{application,dallas_assist,
+             [{description,"web-based tool for monitoring Dallas Erlang cluster"},
+              {vsn,"2.0"},
+              {registered,[]},
+              {applications,[kernel,stdlib,cowboy,jsx]},
+              {mod,{dallas_assist_app,[]}},
+              {env,[]},
+              {modules,[bigwig_app,bigwig_sup,dallas_assist,dallas_assist_app,
+                        dallas_assist_router_hub,dallas_assist_sup,
+                        dallas_assistant,dallas_http_catchall,dallas_http_cni,
+                        dallas_http_ni,dallas_http_pid,dallas_http_static,
+                        dallas_util,dallas_websocket_cni,
+                        dallas_websocket_etop]}]}.

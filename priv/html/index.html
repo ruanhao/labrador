@@ -1,0 +1,154 @@
+<html>
+<head>
+    <title>Dallas Assist</title>
+    <link rel="shortcut icon" href="/static/img/favicon.ico" type="image/x-icon"/>
+    <link rel="stylesheet" type="text/css" href="/static/css/dallas.css"/>
+    <script src="/static/js/jquery-1.9.1.js"></script>
+    <script src="/static/js/jquery.dump.js"></script>
+    <script src="/static/js/jquery.sparkline.js"></script>
+    <script src="/static/js/debug.js"></script>
+    <script src="/static/js/dallas.js"></script>
+    <script src="/static/js/main.js"></script>
+</head>
+<body>
+
+<div id="header">
+    <h1><span style="cursor: hand;" onclick="window.location.reload();">Dallas Assist</span></h1>
+    <div id="cn"></div>
+</div>
+
+<div id="lside">
+    <br/>
+    <br/>
+    <div class="nav">
+        <ul class="menu">
+            <!--<li><span>dls2300-1</span></li>-->
+            <!--<li><span>dls2300-2</span></li>-->
+            <!--<li>-->
+                <!--<span>dls2300-3</span>-->
+                <!--<ul>-->
+                    <!--<li><span>dallas0</span></li>-->
+                    <!--<li><span>dallas1</span></li>-->
+                <!--</ul>-->
+            <!--</li>-->
+            <!--<li><span>dls2300-4</span></li>-->
+            <!--<li>-->
+                <!--<span>dls2300-5</span>-->
+                <!--<ul>-->
+                    <!--<li><span>dallas0</span></li>-->
+                    <!--<li><span>dallas1</span></li>-->
+                    <!--<li><span>dallas2</span></li>-->
+                <!--</ul>-->
+            <!--</li>-->
+        </ul>
+    </div>
+
+    <br/>
+    <br/>
+
+    <div id="cniws"> <!-- Central Node Info WebSocket -->
+        <p>n_procs &nbsp(central node)</p>
+        <span id="nprocssl">&nbsp</span>
+        <p>mem &nbsp&nbsp&nbsp&nbsp&nbsp(central node)</p>
+        <span id="memsl">&nbsp</span>
+        <p>ets &nbsp&nbsp&nbsp&nbsp&nbsp(central node)</p>
+        <span id="etssl">&nbsp</span>
+    </div>
+
+    <br/>
+    <br/>
+
+    <div id="cninfo">
+        <p class="cniname">logical procs: </p>
+        <p><span id="lp"></span></p>
+        <p class="cniname">otp release: </p>
+        <p><span id="otpr"></span></p>
+        <p class="cniname">system arch: </p>
+        <p><span id="sa"></span></p>
+    </div>
+
+
+
+
+
+    <!--<div id="sysinfo">-->
+        <!--<strong>Dallas Info</strong>-->
+        <!--<dl>-->
+            <!--<dt>Process Limit</dt>-->
+            <!--<dd class="proclimit">123</dd>-->
+            <!--<dt>Logical Processors</dt>-->
+            <!--<dd class="logprocs">123</dd>-->
+            <!--<dt>OTP Release</dt>-->
+            <!--<dd class="otprls">123</dd>-->
+            <!--<dt>Architecture</dt>-->
+            <!--<dd class="sysarch">123</dd>-->
+        <!--</dl>-->
+    <!--</div>-->
+
+    <br/>
+    <br/>
+
+
+</div>
+<div id="rside">
+    <br/>
+    <h1>Welcome to use Dallas Assist</h1>
+</div>
+
+<div style="clear: both"></div>
+<div id="footer">Ericsson</div>
+<div id="debug" style="display: none">
+    <input type="button" value="test" id="test"/>
+    <input type="button" value="test" id="testsend"/>
+</div>
+<div id="secret" style="display: none;"></div>
+
+
+<script type="text/javascript">
+    $(document).ready(function()
+    {
+        $("#test").click(function()
+        {
+
+        });
+
+        $("#testsend").click(function() {
+            /*window.open ('about:blank','newwindow',
+                    'height=500,width=200,top=0,left=0,toolbar=no,menubar=no,scrollbars=no,' +
+                            'resizable=no,' + 'location=no, status=no, titlebar=no');*/
+            /*var clientWidth = window.screen.width / 4;
+            var clientHeight = window.screen.height / 6;
+            var flag = "left=" + clientWidth + "," + "top=" + clientHeight + ",";
+            var hst = document.location.host;
+            var win = window.open("http://" + hst + "/static/html/pid.html?pid=<0.0.0>", "", flag + "width=500, height=400");*/
+            //alert(win.document.getElementById("test").value);
+        });
+    });
+
+
+
+
+
+
+
+
+
+
+
+
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

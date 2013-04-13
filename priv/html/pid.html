@@ -1,0 +1,43 @@
+<html>
+<head>
+    <title></title>
+    <link rel="shortcut icon" href="/static/img/favicon.ico" type="image/x-icon"/>
+    <script src="/static/js/jquery-1.9.1.js"></script>
+    <script src="/static/js/jquery.dump.js"></script>
+    <script src="/static/js/debug.js"></script>
+    <script src="/static/js/dallas.js"></script>
+    <script src="/static/js/pid.js"></script>
+</head>
+<body>
+<h1 style="color: royalblue; font-size: 1.5em">process_info(<span id="currpid"></span>)</h1>
+<div id="pidinfo"></div>
+<br/>
+<input hidden="true" type="button" name="kpid" value="KILL PROC"/>
+<div id="debug"></div>
+
+</body>
+<script type="text/javascript">
+    $(document).ready(function() {
+        $("title").text("hello dallas");
+        var qs = window.location.search;
+        var pid = qs.substring(qs.indexOf("=") + 1, qs.length);
+        var pidDec = decodeURI(pid);
+        $("title").text(pidDec);
+        $("#currpid").text(pidDec);
+        $.getJSON("/pid?pid=" + pid, function(data) {
+            //show_debug($.dump(data));
+            var pidHtml = gen_pid_html(data);
+            $("#pidinfo").html(pidHtml);
+            if (! ($("#pidinfo").html().indexOf("Run Away") > 0)) {
+                $("[name*=kpid]:input").show().click(function() {
+                    if (confirm("Sure to kill this process?")) {
+                        $.get("/pid", {kill: "true", pid: pidDec});
+                        $("#pidinfo").html("process " + pidDec + " is killed :)");
+                        $(this).hide();
+                    }
+                });
+            }
+        });
+    });
+</script>
+</html>

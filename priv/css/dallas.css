@@ -1,0 +1,137 @@
+* {
+    margin: 0px;
+    padding: 0px;
+}
+
+body {
+    margin: 0 auto;
+    width: 1350px;
+    padding: 0px;
+    font-family: Consolas, "Droid Sans Mono", Monaco, Courier, monospace;
+    font-size: 12px;
+    letter-spacing: 1px;
+}
+
+#header {
+    padding-left: 0.5em;
+    padding-right: 0.5em;
+    margin-top: 0px;
+    background: #0b3e77;
+}
+
+#footer {
+    margin-top: 5px;
+    background: #0b3e77;
+    color: white;
+    text-align: center;
+}
+
+#cn {
+    color: white;
+}
+
+#header h1 {
+    display: inline;
+    color: white;
+}
+
+#lside {
+    /*background: #b6bdcd;*/
+    background: #F0F8FF;
+    width: 16%;
+    height: 100%;
+    float: left;
+}
+
+#rside {
+    /*background: lawngreen;*/
+    width: 82%;
+    float: right;
+}
+
+#sysinfo {
+    padding-left: 0.5em;
+}
+
+.ui-menu {
+    width: 75%;
+}
+
+.nav {
+    margin-left: 10px;
+    padding-left: 20px;
+}
+
+.menu {
+    /*padding-left: 10px;*/
+}
+
+ul.menu>li {
+    /*font-size: 1.5em;*/
+    list-style: square;
+}
+
+
+ul.menu>li li {
+    width: 30%;
+    /*text-align: center;*/
+    list-style-type: none;
+    /* margin-top: 3px; */
+}
+
+ul.menu>li li span {
+    /*background: gray;*/
+    text-decoration: none;
+    cursor: hand;
+}
+
+.current {
+    background: lightgrey;
+}
+
+ul.menu>li ul {
+    display: none;
+}
+
+div#item>div {
+    padding-top: 10px;
+}
+
+span.sort {
+    cursor: pointer;
+}
+
+#nodeinfo div {
+    width: 30%;
+    float: left;
+}
+
+div#nodeinfo {
+    margin-bottom: 5px;
+}
+
+div#box {
+    margin-bottom: 5px;
+}
+
+div#cninfo, div#cniws {
+    margin-left: 5px;
+}
+
+p.cniname {
+    font-size: 1.2em;
+    font-weight: bold;
+}
+
+#cniws p {
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
+p.cniname {
+    margin-top: 5px;
+}
+
+test {
+    background-color: yellow;
+}

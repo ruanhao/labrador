@@ -1,0 +1,56 @@
+<div id="item">
+    <!--<div id="box">-->
+        <!--<input type="button" id="bni" value="NODE INFO"/>-->
+        <!--<input type="button" id="bpi" value="PROCESS INFO"/>-->
+        <!--<input type="button" id="bci" value="CPU INFO"/>-->
+    <!--</div>-->
+
+    <div id="box">
+        <input type="checkbox" name="sni"/> show node info
+        &nbsp
+        <input type="checkbox" name="pu"/> pause update
+        &nbsp
+        <input type="checkbox" name="acc"/> accumulate
+        &nbsp
+        <label for="search">search: </label>
+        <input id="search" type="text"/>
+    </div>
+
+    <div id="nodeinfo" style="margin-bottom: 10px;">
+        <div>
+            <p>Load: &nbsp&nbsp&nbspCPU&nbsp&nbsp&nbsp&nbsp&nbsp<span id="cpuutil"></span>%</p>
+            <p>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp procs&nbsp&nbsp&nbsp<span id="procnum"></span></p>
+            <p>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp runq&nbsp&nbsp&nbsp&nbsp<span id="runq"></span></p>
+        </div>
+        <div>
+            <p>Memory: &nbsp&nbsp&nbsp total &nbsp&nbsp&nbsp&nbsp&nbsp<span id="totmem"></span></p>
+            <p>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp processes &nbsp<span id="procmem"></span></p>
+            <p>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp atom &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp<span id="atommem"></span></p>
+        </div>
+        <div">
+            <p>&nbsp&nbsp&nbsp&nbsp binary &nbsp<span id="binmem"></span></p>
+            <p>&nbsp&nbsp&nbsp&nbsp code   &nbsp&nbsp&nbsp<span id="codemem"></span></p>
+            <p>&nbsp&nbsp&nbsp&nbsp ets    &nbsp&nbsp&nbsp&nbsp<span id="etsmem"></span></p>
+        </div>
+    </div>
+
+
+
+    <div>
+        <table border="1">
+            <thead>
+            <tr>
+                <th>pid</th>
+                <th>&nbsp<span class="sort">memory</span>&nbsp</th>
+                <th>&nbsp<span class="sort">reductions</span>&nbsp</th>
+                <th>name</th>
+                <th>cf</th>
+                <th>&nbsp<span class="sort">msg_q</span>&nbsp</th>
+            </tr>
+            </thead>
+            <tbody id="pib"> <!-- process info body -->
+            </tbody>
+        </table>
+    </div>
+
+</div>
