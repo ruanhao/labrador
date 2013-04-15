@@ -5,13 +5,10 @@
               {applications,[kernel,stdlib,cowboy,jsx]},
               {mod,{dallas_assist_app,[]}},
               {env,[]},
-              {modules,[bigwig_app,bigwig_sup,dallas_assist,dallas_assist_app,
+              {modules,[dallas_assist,dallas_assist_app,
                         dallas_assist_http_catchall,dallas_assist_http_cni,
                         dallas_assist_http_ni,dallas_assist_http_pid,
                         dallas_assist_http_static,dallas_assist_router_hub,
                         dallas_assist_sup,dallas_assist_util,
                         dallas_assist_websocket_cni,
-                        dallas_assist_websocket_etop,dallas_assistant,
-                        dallas_http_catchall,dallas_http_cni,dallas_http_ni,
-                        dallas_http_pid,dallas_http_static,dallas_util,
-                        dallas_websocket_cni,dallas_websocket_etop]}]}.
+                        dallas_assist_websocket_etop]}]}.
