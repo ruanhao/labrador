@@ -21,13 +21,13 @@ start_link() ->
 
 dispatch_rules() ->
     %% {Host, list({Path, Handler, Opts})}
-    [{'_', [{[],                       	dallas_assist_http_static, [<<"html">>,<<"index.html">>]}, 
-			{[<<"static">>, '...'],     dallas_assist_http_static, []}, 
-			{[<<"ni">>, '...'],      	dallas_assist_http_ni, []}, 
-			{[<<"cni">>, '...'],      	dallas_assist_http_cni, []}, 
-			{[<<"pid">>, '...'],        dallas_assist_http_pid, []}, 
-			{[<<"etop">>, '...'],       dallas_assist_websocket_etop, []}, 
-			{[<<"cnis">>],      		dallas_assist_websocket_cni, []}, 
+    [{'_', [{"/",                       	dallas_assist_http_static, [<<"html">>,<<"index.html">>]}, 
+			{"/static",     dallas_assist_http_static, []}, 
+			{"/ni",      	dallas_assist_http_ni, []}, 
+			{"/cni",      	dallas_assist_http_cni, []}, 
+			{"/pid",        dallas_assist_http_pid, []}, 
+			{"/etop",       dallas_assist_websocket_etop, []}, 
+			{"/cnis",      		dallas_assist_websocket_cni, []}, 
 			{'_',                       dallas_assist_http_catchall, []}]}].
 
 init([]) ->
@@ -38,9 +38,14 @@ init([]) ->
     NumAcceptors    = dallas_assist_util:get_config(num_acceptors, 16),
 	%% Cowboy Specifications
     %% Name, NbAcceptors, Transport, TransOpts, Protocol, ProtoOpts
-	cowboy:start_listener(http, NumAcceptors,
-						  cowboy_tcp_transport, [{port, Port}],
-						  cowboy_http_protocol, [{dispatch, dispatch_rules()}]),
+	%% cowboy:start_listener(http, NumAcceptors,
+	%% 					  cowboy_tcp_transport, [{port, Port}],
+	%% 					  cowboy_http_protocol, [{dispatch, dispatch_rules()}]),
+
+  cowboy:start_http(my_http_listener, 100,
+        [{port, Port}],
+        [{env, [{dispatch, cowboy_router:compile(dispatch_rules())}]}]),
+
 	{LH, IP} = localhost_ip(IP0), 
     error_logger:info_msg("Dallas Assist is ready on: ~s~n"
 			 		 	  "Listening on http://~s:~B/~n", [LH, IP,Port]),
