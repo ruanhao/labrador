@@ -21,17 +21,15 @@ start_link() ->
 
 dispatch_rules() ->
     %% {Host, list({Path, Handler, Opts})}
-%%     [{'_', [{"/",                       	dallas_assist_http_static, [<<"html">>,<<"index.html">>]}, 
-%% 			{"/static/[...]",     dallas_assist_http_static, []}, 
-%% 			{"/ni/[...]",      	dallas_assist_http_ni, []}, 
-%% 			{"/cni/[...]",      	dallas_assist_http_cni, []}, 
+    [{'_', [{"/",                       	dallas_assist_http_static, [<<"html/index.html">>]}, 
+			{"/static/[...]",     dallas_assist_http_static, []}, 
+			{"/ni/[...]",      	dallas_assist_http_ni, []}, 
+			{"/cni/[...]",      	dallas_assist_http_cni, []}, 
 %% 			{"/pid",        dallas_assist_http_pid, []}, 
 %% 			{"/etop",       dallas_assist_websocket_etop, []}, 
-%% 			{"/cnis",      		dallas_assist_websocket_cni, []}, 
-%% 			{'_',                       dallas_assist_http_catchall, []}]}].
-
-	[{'_', [{"/",                       	dallas_assist_http_static, [<<"html">>,<<"test.html">>]}, 
+			{"/cnis",      		dallas_assist_websocket_cni, []}, 
 			{'_',                       dallas_assist_http_catchall, []}]}].
+
 
 init([]) ->
 	io:format("~nStarting Dallas Assist ... ~n", []), 
@@ -73,6 +71,8 @@ code_change(_OldVsn, State, _Extra) ->
 %% Internal Function Definitions
 %% ------------------------------------------------------------------
 ensure_config_right() -> 
+	dallas_assist:msg_trace(?LINE, process_info(self(), current_function), "app name: ~p", [application:get_application()]),
+	dallas_assist:msg_trace(?LINE, process_info(self(), current_function), "cwd: ~p", [file:get_cwd()]),
 	case file:consult("dallas.config") of 
 		{ok, ConfigList} -> 
 			ets:new(ctable, [set, public, named_table, {keypos, 1}]),

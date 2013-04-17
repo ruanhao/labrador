@@ -24,9 +24,18 @@ get_config(Key, Default) ->
 %% 			exit("Configuration Fail")
 	end. 
 
+%% Path should be like: "js/main.js"
+%% Path should not be like: "/js/main.js"
 file(Path) ->
-	Priv = case code:priv_dir(bigwig) of
-			   {error,_} -> "priv";
-			   Priv0 -> Priv0
-		   end,
+	AppName = application:get_application(),
+	%% HEY!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+	dallas_assist:msg_trace(?LINE, process_info(self(), current_function), "App Name: ~p", [AppName]),
+%% 	Priv = case code:priv_dir(dallas_assist) of
+%% 			   {error,_} -> "priv";
+%% 			   Priv0 -> Priv0
+%% 		   end,
+	{ok, CWD} = file:get_cwd(),
+	dallas_assist:msg_trace(?LINE, process_info(self(), current_function), "CWD: ~p", [file:get_cwd()]),
+	Priv = CWD ++ "/priv",
+	dallas_assist:msg_trace(?LINE, process_info(self(), current_function), "Final Path: ~p", [filename:join(Priv, Path)]),
 	file:read_file(filename:join(Priv, Path)).

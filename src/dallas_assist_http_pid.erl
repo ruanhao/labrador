@@ -6,7 +6,7 @@
 %%%----------------------------------------------------------------------
 -module(dallas_assist_http_pid).
 -behaviour(cowboy_http_handler).
--export([init/3, handle/2, terminate/2]).
+-export([init/3, handle/2, terminate/3]).
 
 init({tcp, http}, Req, _Opts) ->
 	{ok, Req, undefined_state}.
@@ -22,7 +22,7 @@ handle(Req, State) ->
 			proc_kill(Pid, Req, State)
 	end.
 
-terminate(_Req, _State) ->
+terminate(_Reason, _Req, _State) ->
 	ok.
 
 proc_kill(Pid, Req, State) -> 

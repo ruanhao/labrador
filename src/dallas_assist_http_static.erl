@@ -13,25 +13,27 @@
 init({tcp, http}, Req, []) ->
   dallas_assist:msg_trace(?LINE, process_info(self(), current_function), "init", []),
   {ok, Req, undefined_state};
-init({tcp, http}, Req, OnlyFile) ->
-  dallas_assist:msg_trace(?LINE, process_info(self(), current_function), "OnlyFile: ~w", [OnlyFile]),
+init({tcp, http}, Req, [OnlyFile]) ->
+  % OnlyFile is like: <<"html/index.html">>	
+  dallas_assist:msg_trace(?LINE, process_info(self(), current_function), "OnlyFile: ~p", [OnlyFile]),
   {ok, Req, OnlyFile}.
 
 handle(Req, undefined_state = State) ->
   dallas_assist:msg_trace(?LINE, process_info(self(), current_function), "handle", []),
-  {[_|Path], Req2} = cowboy_req:path(Req), % strip <<"static">>
+  dallas_assist:msg_trace(?LINE, process_info(self(), current_function), "path: ~p", [cowboy_req:path(Req)]),
+  {Path, Req2} = cowboy_req:path(Req), % Path is like: <<"/js/main.js">>
   send(Req2, Path, State);
 
 handle(Req, OnlyFile = State) ->
   dallas_assist:msg_trace(?LINE, process_info(self(), current_function), "handle", []),
   send(Req, OnlyFile, State).
 
-send(Req, PathBins, State) ->
-	Path = [binary_to_list(P) || P <- PathBins],
-	FullPath = filename:join(Path),
-	case dallas_assist_util:file(FullPath) of
+send(Req, PathBin, State) ->
+	Path = reform_path(PathBin),
+	dallas_assist:msg_trace(?LINE, process_info(self(), current_function), "reformed Path: ~p", [Path]),
+	case dallas_assist_util:file(Path) of
 		{ok, Body} ->
-			Headers = [content_type_header(FullPath)],
+			Headers = [content_type_header(Path)],
 			{ok, Req2} = cowboy_req:reply(200, Headers, Body, Req),
 			{ok, Req2, State};
 		_ -> %% 404 Not Found
@@ -44,6 +46,22 @@ send(Req, PathBins, State) ->
 					{ok, Req2, State}
 			end
 	end.
+
+reform_path(PathBin) -> 
+	Path = binary_to_list(PathBin),
+	Static = "/static",
+	Idx = string:str(Path, Static),
+	P = 
+		case Idx of 
+			0 -> Path;
+			1 -> string:sub_string(Path, 1 + length(Static))
+		end,
+	trim_slash(P).
+
+trim_slash([$/ | T]) -> 
+	T;
+trim_slash(Path) -> 
+	Path.
 
 content_type_header(FullPath) -> 
 	Ext = filename:extension(FullPath), 
