@@ -19,7 +19,7 @@ handle(Req, State) ->
 	CNodeInfo = [{cnode, CNode}, {lp, LProcs}, {otpr, OtpRls}, {sa, SysArch}],
 	Body = jsx:term_to_json(CNodeInfo),
 	Headers = [{<<"Content-Type">>, <<"application/json">>}],
-	{ok, Req2} = cowboy_http_req:reply(200, Headers, Body, Req),
+	{ok, Req2} = cowboy_req:reply(200, Headers, Body, Req),
 	{ok, Req2, State}.
 
 terminate(_Req, _State) ->

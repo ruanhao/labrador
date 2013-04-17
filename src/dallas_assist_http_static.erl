@@ -8,18 +8,22 @@
 -module(dallas_assist_http_static).
 -behaviour(cowboy_http_handler).
 -define(PAGENOTFOUND, "html/404.html").
--export([init/3, handle/2, terminate/2]).
+-export([init/3, handle/2, terminate/3]).
 
 init({tcp, http}, Req, []) ->
+  dallas_assist:msg_trace(?LINE, process_info(self(), current_function), "init", []),
   {ok, Req, undefined_state};
 init({tcp, http}, Req, OnlyFile) ->
+  dallas_assist:msg_trace(?LINE, process_info(self(), current_function), "OnlyFile: ~w", [OnlyFile]),
   {ok, Req, OnlyFile}.
 
 handle(Req, undefined_state = State) ->
-  {[_|Path], Req2} = cowboy_http_req:path(Req), % strip <<"static">>
+  dallas_assist:msg_trace(?LINE, process_info(self(), current_function), "handle", []),
+  {[_|Path], Req2} = cowboy_req:path(Req), % strip <<"static">>
   send(Req2, Path, State);
 
 handle(Req, OnlyFile = State) ->
+  dallas_assist:msg_trace(?LINE, process_info(self(), current_function), "handle", []),
   send(Req, OnlyFile, State).
 
 send(Req, PathBins, State) ->
@@ -28,15 +32,15 @@ send(Req, PathBins, State) ->
 	case dallas_assist_util:file(FullPath) of
 		{ok, Body} ->
 			Headers = [content_type_header(FullPath)],
-			{ok, Req2} = cowboy_http_req:reply(200, Headers, Body, Req),
+			{ok, Req2} = cowboy_req:reply(200, Headers, Body, Req),
 			{ok, Req2, State};
 		_ -> %% 404 Not Found
 			case dallas_assist_util:file(?PAGENOTFOUND) of 
 				{ok, Body} -> 
-					{ok, Req2} = cowboy_http_req:reply(200, [{<<"Content-Type">>, <<"text/html">>}], Body, Req),
+					{ok, Req2} = cowboy_req:reply(200, [{<<"Content-Type">>, <<"text/html">>}], Body, Req),
 					{ok, Req2, State};
 				_ ->	%% No 404 Not Found Page 
-					{ok, Req2} = cowboy_http_req:reply(404, [], <<"<h1>404</h1>">>, Req),
+					{ok, Req2} = cowboy_req:reply(404, [], <<"<h1>404</h1>">>, Req),
 					{ok, Req2, State}
 			end
 	end.
@@ -49,5 +53,5 @@ content_type_header(FullPath) ->
 		_ 	   -> {<<"Content-Type">>, <<"text/html">>}
 	end.
 
-terminate(_Req, _State) ->
+terminate(_Reason, _Req, _State) ->
   ok.

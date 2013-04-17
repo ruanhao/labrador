@@ -133,7 +133,7 @@ check_runtime_tools_vsn(Node) ->
 check_vsn(_Vsn) -> ok.
 
 opts(Req) -> 
-	{Qs, _} = cowboy_http_req:qs_val(<<"node">>, Req),
+	{Qs, _} = cowboy_req:qs_val(<<"node">>, Req),
 	MNode = list_to_atom(binary_to_list(Qs)),
 	AccumTab = ets:new(accum_tab, [set,public,{keypos,#etop_proc_info.pid}]),
 	#opts{node = MNode, 

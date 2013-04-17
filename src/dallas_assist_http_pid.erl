@@ -38,9 +38,9 @@ proc_info(Pid, Req, State) ->
 			   end,
 	Body = jsx:term_to_json(ProcInfo),
 	Headers = [{<<"Content-Type">>, <<"application/json">>}],
-	{ok, Req1} = cowboy_http_req:reply(200, Headers, Body, Req),
+	{ok, Req1} = cowboy_req:reply(200, Headers, Body, Req),
 	{ok, Req1, State}.
 
 qs_val(Key, Req) when is_binary(Key) -> 
-	{Val, _} = cowboy_http_req:qs_val(Key, Req), 
+	{Val, _} = cowboy_req:qs_val(Key, Req), 
 	Val.

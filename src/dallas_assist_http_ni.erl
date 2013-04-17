@@ -24,7 +24,7 @@ handle(Req, State) ->
 	Nodes = dallas_assist_util:get_config(nodes, nodes(connected)), 
 	Body = jsx:term_to_json(parse(Nodes)),
 	Headers = [{<<"Content-Type">>, <<"application/json">>}],
-	{ok, Req2} = cowboy_http_req:reply(200, Headers, Body, Req),
+	{ok, Req2} = cowboy_req:reply(200, Headers, Body, Req),
 	{ok, Req2, State}.
 
 terminate(_Req, _State) ->

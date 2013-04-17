@@ -21,13 +21,16 @@ start_link() ->
 
 dispatch_rules() ->
     %% {Host, list({Path, Handler, Opts})}
-    [{'_', [{"/",                       	dallas_assist_http_static, [<<"html">>,<<"index.html">>]}, 
-			{"/static",     dallas_assist_http_static, []}, 
-			{"/ni",      	dallas_assist_http_ni, []}, 
-			{"/cni",      	dallas_assist_http_cni, []}, 
-			{"/pid",        dallas_assist_http_pid, []}, 
-			{"/etop",       dallas_assist_websocket_etop, []}, 
-			{"/cnis",      		dallas_assist_websocket_cni, []}, 
+%%     [{'_', [{"/",                       	dallas_assist_http_static, [<<"html">>,<<"index.html">>]}, 
+%% 			{"/static/[...]",     dallas_assist_http_static, []}, 
+%% 			{"/ni/[...]",      	dallas_assist_http_ni, []}, 
+%% 			{"/cni/[...]",      	dallas_assist_http_cni, []}, 
+%% 			{"/pid",        dallas_assist_http_pid, []}, 
+%% 			{"/etop",       dallas_assist_websocket_etop, []}, 
+%% 			{"/cnis",      		dallas_assist_websocket_cni, []}, 
+%% 			{'_',                       dallas_assist_http_catchall, []}]}].
+
+	[{'_', [{"/",                       	dallas_assist_http_static, [<<"html">>,<<"test.html">>]}, 
 			{'_',                       dallas_assist_http_catchall, []}]}].
 
 init([]) ->
