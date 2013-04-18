@@ -15,7 +15,7 @@
 -export([websocket_init/3, websocket_handle/3, websocket_terminate/3, websocket_info/3]).
 
 init({tcp, http}, _Req, _Opts) ->
-    {upgrade, protocol, cowboy_http_websocket}.
+    {upgrade, protocol, cowboy_websocket}.
 
 handle(_Req, _State) ->
     exit(websockets_only).
