@@ -1,10 +1,10 @@
 %%%----------------------------------------------------------------------
-%%% File    : dallas_assist_websocket_etop.erl
+%%% File    : labrador_websocket_etop.erl
 %%% Author  : Hao Ruan <ryan.ruan@ericsson.com>
 %%% Purpose : Continuously generate Erlang top information.
 %%% Created : Apr 7, 2013
 %%%----------------------------------------------------------------------
--module(dallas_assist_websocket_etop).
+-module(labrador_websocket_etop).
 -behaviour(cowboy_websocket_handler).
 -behaviour(cowboy_http_handler).
 -define(INTERVAL, 3000).
@@ -138,5 +138,5 @@ opts(Req) ->
 	AccumTab = ets:new(accum_tab, [set,public,{keypos,#etop_proc_info.pid}]),
 	#opts{node = MNode, 
 		  accum_tab = AccumTab, 
-		  intv = dallas_assist_util:get_config(interval, ?INTERVAL), 
-		  lines = dallas_assist_util:get_config(lines, ?DEFAULT_LINES)}.
+		  intv = labrador_util:get_config(interval, ?INTERVAL), 
+		  lines = labrador_util:get_config(lines, ?DEFAULT_LINES)}.

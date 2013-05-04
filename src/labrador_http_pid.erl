@@ -1,10 +1,10 @@
 %%%----------------------------------------------------------------------
-%%% File    : dallas_assist_http_pid.erl
+%%% File    : labrador_http_pid.erl
 %%% Author  : Hao Ruan <ryan.ruan@ericsson.com>
 %%% Purpose : Get proc information or kill the proc.
 %%% Created : Apr 9, 2013
 %%%----------------------------------------------------------------------
--module(dallas_assist_http_pid).
+-module(labrador_http_pid).
 -behaviour(cowboy_http_handler).
 -export([init/3, handle/2, terminate/3]).
 

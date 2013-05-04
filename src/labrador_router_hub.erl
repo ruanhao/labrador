@@ -1,10 +1,10 @@
 %%%----------------------------------------------------------------------
-%%% File    : dallas_assist_router_hub.erl
+%%% File    : labrador_router_hub.erl
 %%% Author  : Hao Ruan <ryan.ruan@ericsson.com> (Acknowlegement to BigWig)
 %%% Purpose : Handle request dispatchment.
 %%% Created : Apr 3, 2013
 %%%----------------------------------------------------------------------
--module(dallas_assist_router_hub).
+-module(labrador_router_hub).
 -behaviour(gen_server).
 -define(SERVER, ?MODULE).
 -define(DFLTIP, "127.0.0.1").
@@ -21,22 +21,22 @@ start_link() ->
 
 dispatch_rules() ->
     %% {Host, list({Path, Handler, Opts})}
-    [{'_', [{"/",                       	dallas_assist_http_static, [<<"html/index.html">>]}, 
-			{"/static/[...]",     dallas_assist_http_static, []}, 
-			{"/ni",      	dallas_assist_http_ni, []}, 
-			{"/cni",      	dallas_assist_http_cni, []}, 
-			{"/pid",        dallas_assist_http_pid, []}, 
-			{"/etop",       dallas_assist_websocket_etop, []}, 
-			{"/cnis",      		dallas_assist_websocket_cni, []}, 
-			{'_',                       dallas_assist_http_catchall, []}]}].
+    [{'_', [{"/",                 labrador_http_static, [<<"html/index.html">>]}, 
+			{"/static/[...]",     labrador_http_static, []}, 
+			{"/ni",      	labrador_http_ni, []}, 
+			{"/cni",      	labrador_http_cni, []}, 
+			{"/pid",        labrador_http_pid, []}, 
+			{"/etop",       labrador_websocket_etop, []}, 
+			{"/cnis",      	labrador_websocket_cni, []}, 
+			{'_',           labrador_http_catchall, []}]}].
 
 
 init([]) ->
-	io:format("~nStarting Dallas Assist ... ~n", []), 
+	io:format("~nstarting labrador ... ~n", []), 
 	ensure_config_right(),
-    Port            = dallas_assist_util:get_config(port, 40829),
-    IP0             = dallas_assist_util:get_config(ip, "127.0.0.1"),
-    NumAcceptors    = dallas_assist_util:get_config(num_acceptors, 16),
+    Port            = labrador_util:get_config(port, 40829),
+    IP0             = labrador_util:get_config(ip, "127.0.0.1"),
+    NumAcceptors    = labrador_util:get_config(num_acceptors, 16),
 	%% Cowboy Specifications
     %% Name, NbAcceptors, Transport, TransOpts, Protocol, ProtoOpts
 	%% cowboy:start_listener(http, NumAcceptors,
@@ -48,8 +48,8 @@ init([]) ->
         [{env, [{dispatch, cowboy_router:compile(dispatch_rules())}]}]),
 
 	{LH, IP} = localhost_ip(IP0), 
-    error_logger:info_msg("Dallas Assist is ready on: ~s~n"
-			 		 	  "Listening on http://~s:~B/~n", [LH, IP,Port]),
+    error_logger:info_msg("labrador is ready on: ~s~n"
+			 		 	  "listening on http://~s:~B/~n", [LH, IP,Port]),
     {ok, #state{}}.
 
 handle_call(_Request, _From, State) ->
@@ -71,9 +71,9 @@ code_change(_OldVsn, State, _Extra) ->
 %% Internal Function Definitions
 %% ------------------------------------------------------------------
 ensure_config_right() -> 
-	dallas_assist:msg_trace(?LINE, process_info(self(), current_function), "app name: ~p", [application:get_application()]),
-	dallas_assist:msg_trace(?LINE, process_info(self(), current_function), "cwd: ~p", [file:get_cwd()]),
-	case file:consult("dallas.config") of 
+	labrador:msg_trace(?LINE, process_info(self(), current_function), "app name: ~p", [application:get_application()]),
+	labrador:msg_trace(?LINE, process_info(self(), current_function), "cwd: ~p", [file:get_cwd()]),
+	case file:consult("labrador.config") of 
 		{ok, ConfigList} -> 
 			ets:new(ctable, [set, public, named_table, {keypos, 1}]),
 			[begin 

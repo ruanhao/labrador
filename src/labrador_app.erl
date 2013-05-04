@@ -1,4 +1,4 @@
--module(dallas_assist_app).
+-module(labrador_app).
 
 -behaviour(application).
 
@@ -10,7 +10,7 @@
 %% ===================================================================
 
 start(_StartType, _StartArgs) -> 
-	dallas_assist_sup:start_link().
+	labrador_sup:start_link().
 
 stop(_State) ->
     ok.

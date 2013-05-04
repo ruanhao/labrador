@@ -1,11 +1,11 @@
 %%%----------------------------------------------------------------------
-%%% File    : dallas_assist_sup.erl
+%%% File    : labrador_sup.erl
 %%% Author  : Hao Ruan <ryan.ruan@ericsson.com>	
 %%%           (Acknowlegement to BigWig)
 %%% Purpose : Handle all unexpected URL.
 %%% Created : Apr 3, 2013
 %%%----------------------------------------------------------------------
--module(dallas_assist_sup).
+-module(labrador_sup).
 
 -behaviour(supervisor).
 
@@ -28,7 +28,7 @@ start_link() ->
 %% Supervisor callbacks
 %% ===================================================================
 init([]) ->
-    Http        = ?CHILD(dallas_assist_router_hub, worker),
+    Http        = ?CHILD(labrador_router_hub, worker),
     Specs       = [Http],
     {ok, {{one_for_one, 5, 10}, Specs}}.
 

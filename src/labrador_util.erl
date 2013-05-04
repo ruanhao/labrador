@@ -1,10 +1,10 @@
 %%%----------------------------------------------------------------------
-%%% File    : dallas_assist_util.erl
+%%% File    : labrador_util.erl
 %%% Author  : Hao Ruan <ryan.ruan@ericsson.com>
 %%% Purpose : Utilities functions
 %%% Created : Apr 8, 2013
 %%%----------------------------------------------------------------------
--module(dallas_assist_util).
+-module(labrador_util).
 -compile(export_all).
 -define(TABLE, ctable).
 
@@ -29,13 +29,13 @@ get_config(Key, Default) ->
 file(Path) ->
 	AppName = application:get_application(),
 	%% HEY!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-	dallas_assist:msg_trace(?LINE, process_info(self(), current_function), "App Name: ~p", [AppName]),
-%% 	Priv = case code:priv_dir(dallas_assist) of
+	labrador:msg_trace(?LINE, process_info(self(), current_function), "App Name: ~p", [AppName]),
+%% 	Priv = case code:priv_dir(labrador) of
 %% 			   {error,_} -> "priv";
 %% 			   Priv0 -> Priv0
 %% 		   end,
 	{ok, CWD} = file:get_cwd(),
-	dallas_assist:msg_trace(?LINE, process_info(self(), current_function), "CWD: ~p", [file:get_cwd()]),
+	labrador:msg_trace(?LINE, process_info(self(), current_function), "CWD: ~p", [file:get_cwd()]),
 	Priv = CWD ++ "/priv",
-	dallas_assist:msg_trace(?LINE, process_info(self(), current_function), "Final Path: ~p", [filename:join(Priv, Path)]),
+	labrador:msg_trace(?LINE, process_info(self(), current_function), "Final Path: ~p", [filename:join(Priv, Path)]),
 	file:read_file(filename:join(Priv, Path)).

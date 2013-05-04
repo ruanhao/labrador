@@ -1,11 +1,11 @@
 %%%----------------------------------------------------------------------
-%%% File    : dallas_assist_websocket_cni.erl
+%%% File    : labrador_websocket_cni.erl
 %%% Author  : Hao Ruan <ryan.ruan@ericsson.com>
 %%% Purpose : Continuously generate central node information which is 
 %%%           supplied to Sparkline.
 %%% Created : Apr 4, 2013
 %%%----------------------------------------------------------------------
--module(dallas_assist_websocket_cni).
+-module(labrador_websocket_cni).
 -behaviour(cowboy_websocket_handler).
 -behaviour(cowboy_http_handler).
 -define(INTERVAL, 2000).
@@ -34,7 +34,7 @@ websocket_info(Info, Req, State) ->
     {ok, Req, State}.
 
 update() -> 
-	CNode = dallas_assist_util:get_cnode(),
+	CNode = labrador_util:get_cnode(),
 	NProcs = length(rpc:call(CNode, erlang, processes, [])), 
 	MemTot = rpc:call(CNode, erlang, memory, [total]),
 	MemEts = rpc:call(CNode, erlang, memory, [ets]),

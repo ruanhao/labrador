@@ -1,10 +1,10 @@
 %%%----------------------------------------------------------------------
-%%% File    : dallas_assist_http_ni.erl
+%%% File    : labrador_http_ni.erl
 %%% Author  : Hao Ruan <ryan.ruan@ericsson.com>
 %%% Purpose : Update nodes information to generate menu on web page.
 %%% Created : Apr 3, 2013
 %%%----------------------------------------------------------------------
--module(dallas_assist_http_ni).
+-module(labrador_http_ni).
 -behaviour(cowboy_http_handler).
 -export([init/3, handle/2, terminate/3]).
 
@@ -21,7 +21,7 @@ handle(Req, State) ->
 %% 			 'dallas1@dls937-4', 
 %% 			 'dallas0@dls937-5', 
 %% 			 'dallas1@dls937-5'],
-	Nodes = dallas_assist_util:get_config(nodes, nodes(connected)), 
+	Nodes = labrador_util:get_config(nodes, nodes(connected)), 
 	Body = jsx:term_to_json(parse(Nodes)),
 	Headers = [{<<"Content-Type">>, <<"application/json">>}],
 	{ok, Req2} = cowboy_req:reply(200, Headers, Body, Req),

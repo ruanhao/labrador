@@ -1,10 +1,10 @@
 %%%----------------------------------------------------------------------
-%%% File    : dallas_assist.erl
+%%% File    : labrador.erl
 %%% Author  : BigWig
 %%% Purpose : Startup file.
 %%% Created : Apr 3, 2013
 %%%----------------------------------------------------------------------
--module(dallas_assist).
+-module(labrador).
 -export([start/0, stop/0, msg_trace/4]).
 
 ensure_started(App) ->
@@ -21,10 +21,10 @@ start() ->
 	ensure_started(ranch),
     ensure_started(cowboy),
     ensure_started(jsx),
-    application:start(dallas_assist).
+    application:start(labrador).
 
 stop() ->
-    application:stop(dallas_assist).
+    application:stop(labrador).
 
 msg_trace(LineNum, ProcInfo, DebugStr, DebugVals) ->
   ModName = element(1, element(2, ProcInfo)),
