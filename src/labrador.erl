@@ -1,10 +1,14 @@
-%%%----------------------------------------------------------------------
-%%% File    : labrador.erl
-%%% Author  : BigWig
-%%% Purpose : Startup file.
-%%% Created : Apr 3, 2013
-%%%----------------------------------------------------------------------
+%% The contents of this file are subject to the Erlang Public License,
+%% Version 1.1, (the "License"); you may not use this file except in
+%% compliance with the License. You should have received a copy of the
+%% Erlang Public License along with this software. If not, it can be
+%% retrieved online at http://www.erlang.org/.
+
 -module(labrador).
+-author('SMELLS LIKE BEAM SPIRIT').
+-modified('Date: 2013/04/03').
+-modified_by('ryan.ruan@ericsson.com').
+-revision('Revision: 2.1').
 -export([start/0, stop/0, msg_trace/4]).
 
 ensure_started(App) ->
