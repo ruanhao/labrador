@@ -2,11 +2,9 @@
  [{description, "GUI Process Analysis Tool For Monitoring Dallas Erlang Cluster"},
   {vsn, "2.1"},
   {registered, []},
-  {applications, [
-                  kernel,
+  {applications, [kernel,
                   stdlib,
                   cowboy,
-                  jsx
-                 ]},
-  {mod, {labrador_app , []}},
+                  jsx]},
+  {mod, {labrador_app, []}},
   {env, []}]}.

@@ -1,18 +1,37 @@
-%% The contents of this file are subject to the Erlang Public License,
-%% Version 1.1, (the "License"); you may not use this file except in
-%% compliance with the License. You should have received a copy of the
-%% Erlang Public License along with this software. If not, it can be
-%% retrieved online at http://www.erlang.org/.
+%%%----------------------------------------------------------------------
+%%% File      : labrador_http_catchall.erl
+%%% Author    : ryan.ruan@ericsson.com
+%%% Purpose   : Catch all HTTP requests that are not expected.
+%%% Created   : Apr 11, 2013
+%%%----------------------------------------------------------------------
+
+%%%----------------------------------------------------------------------
+%%% Copyright Ericsson AB 1996-2013. All Rights Reserved.
+%%%
+%%% The contents of this file are subject to the Erlang Public License,
+%%% Version 1.1, (the "License"); you may not use this file except in
+%%% compliance with the License. You should have received a copy of the
+%%% Erlang Public License along with this software. If not, it can be
+%%% retrieved online at http://www.erlang.org/.
+%%%
+%%% Software distributed under the License is distributed on an "AS IS"
+%%% basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See
+%%% the License for the specific language governing rights and limitations
+%%% under the License.
+%%%----------------------------------------------------------------------
+
 -module(labrador_http_catchall).
 
--created('Date: 2013/04/11').
--author('ryan.ruan@ericsson.com').
--revision('Revision: 2.1').
+-define(PAGENOTFOUND, "html/404.html").
 
 -behaviour(cowboy_http_handler).
--define(PAGENOTFOUND, "html/404.html").
+
+%% Behaviour Callbacks
 -export([init/3, handle/2, terminate/3]).
 
+%% ===================================================================
+%% Behaviour Callbacks
+%% ===================================================================
 init({tcp, http}, Req, _Opts) ->
 	labrador:msg_trace(?LINE, process_info(self(), current_function), "init", []),
     {ok, Req, undefined_state}.
@@ -32,4 +51,3 @@ handle(Req, State) ->
 
 terminate(_Reason, _Req, _State) ->
     ok.
-

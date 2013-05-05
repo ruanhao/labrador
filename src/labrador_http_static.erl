@@ -1,15 +1,38 @@
 %%%----------------------------------------------------------------------
-%%% File    : labrador_http_static.erl
-%%% Author  : Hao Ruan <ryan.ruan@ericsson.com> 
-%%%           (Acknowlegement to BigWig)
-%%% Purpose : Handle all static HTML request. 
-%%% Created : Apr 3, 2013
+%%% File      : labrador_http_static.erl
+%%% Author    : SMELLS LIKE BEAM SPIRIT
+%%% Modifier  : ryan.ruan@ericsson.com
+%%% Purpose   : Handle all static HTML requests.
+%%% Created   : Apr 3, 2013
 %%%----------------------------------------------------------------------
+
+%%%----------------------------------------------------------------------
+%%% Copyright Ericsson AB 1996-2013. All Rights Reserved.
+%%%
+%%% The contents of this file are subject to the Erlang Public License,
+%%% Version 1.1, (the "License"); you may not use this file except in
+%%% compliance with the License. You should have received a copy of the
+%%% Erlang Public License along with this software. If not, it can be
+%%% retrieved online at http://www.erlang.org/.
+%%%
+%%% Software distributed under the License is distributed on an "AS IS"
+%%% basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See
+%%% the License for the specific language governing rights and limitations
+%%% under the License.
+%%%----------------------------------------------------------------------
+
 -module(labrador_http_static).
--behaviour(cowboy_http_handler).
+
 -define(PAGENOTFOUND, "html/404.html").
+
+-behaviour(cowboy_http_handler).
+
+%% Behaviour Callbacks
 -export([init/3, handle/2, terminate/3]).
 
+%% ===================================================================
+%% Behaviour Callbacks
+%% ===================================================================
 init({tcp, http}, Req, []) ->
   labrador:msg_trace(?LINE, process_info(self(), current_function), "init", []),
   {ok, Req, undefined_state};
@@ -28,6 +51,9 @@ handle(Req, OnlyFile = State) ->
   labrador:msg_trace(?LINE, process_info(self(), current_function), "handle", []),
   send(Req, OnlyFile, State).
 
+%% ===================================================================
+%% Inner Functions
+%% ===================================================================
 send(Req, PathBin, State) ->
 	Path = reform_path(PathBin),
 	labrador:msg_trace(?LINE, process_info(self(), current_function), "reformed Path: ~p", [Path]),
