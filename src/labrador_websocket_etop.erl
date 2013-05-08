@@ -1,28 +1,59 @@
 %%%----------------------------------------------------------------------
-%%% File    : dallas_assist_websocket_etop.erl
-%%% Author  : Hao Ruan <ryan.ruan@ericsson.com>
-%%% Purpose : Continuously generate Erlang top information.
-%%% Created : Apr 7, 2013
+%%% File      : labrador_websocket_etop.erl
+%%% Author    : ryan.ruan@ericsson.com
+%%% Purpose   : Continuously generate Erlang top information.
+%%% Created   : Apr 7, 2013
 %%%----------------------------------------------------------------------
--module(dallas_assist_websocket_etop).
--behaviour(cowboy_http_handler).
--behaviour(cowboy_http_websocket_handler).
--define(INTERVAL, 3000).
--define(DEFAULT_LINES, 100).
--record(opts, {node = node(), accum = false, intv = ?INTERVAL, lines = ?DEFAULT_LINES, sort = reductions, accum_tab}).
+
+%%%----------------------------------------------------------------------
+%%% Copyright Ericsson AB 1996-2013. All Rights Reserved.
+%%%
+%%% The contents of this file are subject to the Erlang Public License,
+%%% Version 1.1, (the "License"); you may not use this file except in
+%%% compliance with the License. You should have received a copy of the
+%%% Erlang Public License along with this software. If not, it can be
+%%% retrieved online at http://www.erlang.org/.
+%%%
+%%% Software distributed under the License is distributed on an "AS IS"
+%%% basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See
+%%% the License for the specific language governing rights and limitations
+%%% under the License.
+%%%----------------------------------------------------------------------
+-module(labrador_websocket_etop).
+
 -include("observer_backend.hrl").
--export([init/3, handle/2, terminate/2]).
+
+-define(DEFAULT_LINES, 100).
+
+-define(INTERVAL, 3000).
+
+-record(opts, {node = node(), accum = false, intv = ?INTERVAL, lines = ?DEFAULT_LINES, sort = reductions, accum_tab}).
+
+-behaviour(cowboy_websocket_handler).
+
+-behaviour(cowboy_http_handler).
+
+%% Behaviour Callbacks (cowboy_http_handler)
+-export([init/3, handle/2, terminate/3]).
+
+%% Behaviour Callbacks (cowboy_websocket_handler)
 -export([websocket_init/3, websocket_handle/3, websocket_terminate/3, websocket_info/3]).
 
+%% ===================================================================
+%% Behaviour Callbacks (cowboy_http_handler)
+%% ===================================================================
 init({tcp, http}, _Req, _Opts) ->
-    {upgrade, protocol, cowboy_http_websocket}.
+    {upgrade, protocol, cowboy_websocket}.
 
 handle(_Req, _State) ->
     exit(websockets_only).
 
-terminate(_Req, _State) ->
+terminate(_Reason, _Req, _State) ->
     exit(websockets_only).
 
+%% ===================================================================
+%% Behaviour Callbacks (cowboy_websocket_handler)
+%% ===================================================================
 websocket_init(_TransportName, Req, _Opts) ->
 	Opts = opts(Req),
 	check_connectivity(Opts),
@@ -47,6 +78,9 @@ websocket_handle(Msg, Req, Opts) ->
 	timer:send_after(0, update),
  	{ok, Req, OptUpdated}.
 
+%% ===================================================================
+%% Inner Functions
+%% ===================================================================
 config(Para, Opts) -> 
 	case Para of 
 		reductions -> Opts#opts{sort = reductions};
@@ -133,10 +167,10 @@ check_runtime_tools_vsn(Node) ->
 check_vsn(_Vsn) -> ok.
 
 opts(Req) -> 
-	{Qs, _} = cowboy_http_req:qs_val(<<"node">>, Req),
+	{Qs, _} = cowboy_req:qs_val(<<"node">>, Req),
 	MNode = list_to_atom(binary_to_list(Qs)),
 	AccumTab = ets:new(accum_tab, [set,public,{keypos,#etop_proc_info.pid}]),
 	#opts{node = MNode, 
 		  accum_tab = AccumTab, 
-		  intv = dallas_assist_util:get_config(interval, ?INTERVAL), 
-		  lines = dallas_assist_util:get_config(lines, ?DEFAULT_LINES)}.
+		  intv = labrador_util:get_config(interval, ?INTERVAL), 
+		  lines = labrador_util:get_config(lines, ?DEFAULT_LINES)}.

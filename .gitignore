@@ -5,5 +5,5 @@ deps
 *.plt
 .project
 .settings
-log
 *.dump
+log

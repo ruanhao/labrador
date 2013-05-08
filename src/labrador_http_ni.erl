@@ -1,13 +1,35 @@
 %%%----------------------------------------------------------------------
-%%% File    : dallas_assist_http_ni.erl
-%%% Author  : Hao Ruan <ryan.ruan@ericsson.com>
-%%% Purpose : Update nodes information to generate menu on web page.
-%%% Created : Apr 3, 2013
+%%% File      : labrador_http_ni.erl
+%%% Author    : ryan.ruan@ericsson.com
+%%% Purpose   : Obtain nodes information to generate nodes-tree.
+%%% Created   : Apr 3, 2013
 %%%----------------------------------------------------------------------
--module(dallas_assist_http_ni).
--behaviour(cowboy_http_handler).
--export([init/3, handle/2, terminate/2]).
 
+%%%----------------------------------------------------------------------
+%%% Copyright Ericsson AB 1996-2013. All Rights Reserved.
+%%%
+%%% The contents of this file are subject to the Erlang Public License,
+%%% Version 1.1, (the "License"); you may not use this file except in
+%%% compliance with the License. You should have received a copy of the
+%%% Erlang Public License along with this software. If not, it can be
+%%% retrieved online at http://www.erlang.org/.
+%%%
+%%% Software distributed under the License is distributed on an "AS IS"
+%%% basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See
+%%% the License for the specific language governing rights and limitations
+%%% under the License.
+%%%----------------------------------------------------------------------
+
+-module(labrador_http_ni).
+
+-behaviour(cowboy_http_handler).
+
+%% Behaviour Callbacks
+-export([init/3, handle/2, terminate/3]).
+
+%% ===================================================================
+%% Behaviour Callbacks
+%% ===================================================================
 init({tcp, http}, Req, _Opts) ->
 	{ok, Req, undefined_state}.
 
@@ -21,15 +43,18 @@ handle(Req, State) ->
 %% 			 'dallas1@dls937-4', 
 %% 			 'dallas0@dls937-5', 
 %% 			 'dallas1@dls937-5'],
-	Nodes = dallas_assist_util:get_config(nodes, nodes(connected)), 
+	Nodes = labrador_util:get_config(nodes, nodes(connected)), 
 	Body = jsx:term_to_json(parse(Nodes)),
 	Headers = [{<<"Content-Type">>, <<"application/json">>}],
-	{ok, Req2} = cowboy_http_req:reply(200, Headers, Body, Req),
+	{ok, Req2} = cowboy_req:reply(200, Headers, Body, Req),
 	{ok, Req2, State}.
 
-terminate(_Req, _State) ->
+terminate(_Reason, _Req, _State) ->
 	ok.
 
+%% ===================================================================
+%% Inner Functions
+%% ===================================================================
 %% parse is used to output: 
 %% [{'dls2300-1', [dallas0, dallas1, dallas2]}, 
 %%	{'dls2300-2', [dallas0]}, 
