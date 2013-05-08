@@ -6,7 +6,7 @@
     <script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
     <script src="/static/js/jquery.dump.js"></script>
     <script src="/static/js/debug.js"></script>
-    <script src="/static/js/dallas.js"></script>
+    <script src="/static/js/labrador.js"></script>
     <script src="/static/js/pid.js"></script>
 </head>
 <body>
@@ -19,7 +19,6 @@
 </body>
 <script type="text/javascript">
     $(document).ready(function() {
-        $("title").text("hello dallas");
         var qs = window.location.search;
         var pid = qs.substring(qs.indexOf("=") + 1, qs.length);
         var pidDec = decodeURI(pid);
