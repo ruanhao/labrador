@@ -1,28 +1,14 @@
 /**
- * Created with JetBrains WebStorm.
- * This script is included in index.html
- * Author: Hao Ruan <ryan.ruan@ericsson.com>
- * Date  : 13-4-9
- * Time  : PM 8:51
+ * File   : main.js
+ * Author : ryan.ruan@ericsson.com
+ * Purpose: linked in index.html
+ * Date   : 13-4-9 PM 8:51
  */
 
-var globalRef = null;
+var globalRef       = null;
 /* current process info websocket */
 var currPiWebsocket = null;
-var isPaused = false;
-
-
-/*function setBtnToggle()
-{
-    $("#box :button").click(function()
-    {
-        var idx = $(this).index();
-        $(this).parent().siblings().hide();
-        $(this).parent().siblings().eq(idx).show();
-
-    });
-    $('#box [value*="CPU"]:button').triggerHandler("click");
-}*/
+var isPaused        = false;
 
 $(document).ready(function()
 {
@@ -33,11 +19,11 @@ $(document).ready(function()
 
 function setSpkLine() {
     // Bar + line composite charts
-    var cpuArr = [];
-    var memArr = [];
-    var etsArr = [];
+    var cpuArr    = [];
+    var memArr    = [];
+    var etsArr    = [];
     var ARRMAXLEN = 35;
-    DALLAS.connect("/cnis", function(msg) {
+    LABRADOR.connect("/cnis", function(msg) {
         var jsonObj = $.parseJSON(msg.data);
         cpuArr.push(jsonObj.nprocs);
         memArr.push(jsonObj.memtot);
@@ -56,10 +42,10 @@ function setSpkLine() {
 
 function setCnodeInfo() {
     $.getJSON("/cni", function(data) {
-        $("#cn").text(data.cnode);
-        $("#lp").text(data.lp);
+        $("#cn")  .text(data.cnode);
+        $("#lp")  .text(data.lp);
         $("#otpr").text(data.otpr);
-        $("#sa").text(data.sa);
+        $("#sa")  .text(data.sa);
     });
 }
 
@@ -76,10 +62,10 @@ function setNodesMenu() {
                 $rootUl.append("<li><span>" + node + "</span></li>");
             });
             $rootLi.append($rootUl);
-            $root.append($rootLi);
+            $root  .append($rootLi);
         });
 
-        $(".menu>li ul li span").click(function()   /*node interchange*/
+        $(".menu>li ul li span").click(function()   /*node exchange*/
         {
             $(".menu>li ul li span").removeClass("current");
             $(this).addClass("current");
@@ -99,7 +85,6 @@ function setNodesMenu() {
 
         $("ul.menu>li>span").click(function()   /*toggle choice*/
         {
-            /* alert($(this).html()); */
             $(this).next("ul").toggle();
         });
     });
@@ -111,8 +96,7 @@ function onLoadTplComplete() {
     setAccCheck();
     setSearchFn();
     setSort();
-    //alert(globalRef);
-    currPiWebsocket = DALLAS.connect("/etop?node=" + globalRef, function(msg) {
+    currPiWebsocket = LABRADOR.connect("/etop?node=" + globalRef, function(msg) {
         //show_debug($.dump($.parseJSON(msg.data)));
         doTabUpdate(msg);
         $("#search").trigger("keyup");
@@ -132,31 +116,38 @@ function setSearchFn() {
 function doTabUpdate(msg) {
     if (!isPaused) {
         $("#pib").empty();
-        var bodyStr = "";
-        var jsonObf = $.parseJSON(msg.data);
+        var bodyStr   = "";
+        var jsonObf   = $.parseJSON(msg.data);
         var procInfos = jsonObf.proc_info;
-        var nodeInfo = jsonObf.node_info;
+        var nodeInfo  = jsonObf.node_info;
         $("#cpuutil").text(nodeInfo[0]);
         $("#procnum").text(nodeInfo[1]);
-        $("#runq").text(nodeInfo[2]);
-        $("#totmem").text(nodeInfo[3]);
-        $("#binmem").text(nodeInfo[4]);
+        $("#runq")   .text(nodeInfo[2]);
+        $("#totmem") .text(nodeInfo[3]);
+        $("#binmem") .text(nodeInfo[4]);
         $("#procmem").text(nodeInfo[5]);
         $("#codemem").text(nodeInfo[6]);
         $("#atommem").text(nodeInfo[7]);
-        $("#etsmem").text(nodeInfo[8]);
+        $("#etsmem") .text(nodeInfo[8]);
         $.each(procInfos, function(idx, value) {
             var piArr   = value.data;
-            //var pid     = "<td>" + piArr[1].data + "</td>";
-            var pid     = "<td><a id='pid' href='" + "/static/html/pid.html?pid=" + piArr[1].data + "'>" + piArr[1].data + "</a></td>";
+            var pid     = "<td><a id='pid' href='" + 
+                          "/static/html/pid.html?pid=" + 
+                          piArr[1].data + "'>" + piArr[1].data + "</a></td>";
             var mem     = "<td>" + piArr[2] + "</td>";
             var reds    = "<td>" + piArr[3] + "</td>";
             if (typeof(piArr[4]) == "object") {
-                var name = "<td>" + piArr[4].data[0] + ":" + piArr[4].data[1] + "/" + piArr[4].data[2] + "</td>";
+                var name = "<td>" + 
+                           piArr[4].data[0] + ":" + 
+                           piArr[4].data[1] + "/" + 
+                           piArr[4].data[2] + "</td>";
             } else {
                 var name = "<td>" + piArr[4] + "</td>";
             }
-            var cf      = "<td>" + piArr[6].data[0] + ":" + piArr[6].data[1] + "/" + piArr[6].data[2] + "</td>";
+            var cf      = "<td>" + 
+                          piArr[6].data[0] + ":" + 
+                          piArr[6].data[1] + "/" + 
+                          piArr[6].data[2] + "</td>";
             var mq      = "<td>" + piArr[7] + "</td>";
             bodyStr += "<tr>" + pid + mem + reds + name + cf + mq + "</tr>";
         });

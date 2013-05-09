@@ -1,11 +1,11 @@
 /**
- * This is a common javascript file
- * Author: Hao Ruan <ryan.ruan@ericsson.com>
- * Date  : 13-4-4
- * Time  : 6:35
+ * File     : labrador.js
+ * Author   : ryan.ruan@ericsson.com
+ * Purpose  : labrador websocket connection library
+ * Created  : 2013-4-4 6:35
  */
 
-var DALLAS = (function(){
+var LABRADOR = (function(){
     var connect = function(path, callback) {
         var host = document.location.host;
         var sock = new WebSocket("ws://"+host+path);
@@ -14,7 +14,6 @@ var DALLAS = (function(){
         sock.onmessage = callback;
         return sock;
     };
-
     return {
         connect: connect
     };
