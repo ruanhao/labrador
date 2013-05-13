@@ -25,19 +25,20 @@ function setSpkLine() {
     var ARRMAXLEN = 35;
     LABRADOR.connect("/cnis", function(msg) {
         var jsonObj = $.parseJSON(msg.data);
-        cpuArr.push(jsonObj.nprocs);
-        memArr.push(jsonObj.memtot);
-        etsArr.push(jsonObj.ets);
-        if (cpuArr.length > ARRMAXLEN) {cpuArr.splice(0, 1);}
-        if (memArr.length > ARRMAXLEN) {memArr.splice(0, 1);}
-        if (etsArr.length > ARRMAXLEN) {etsArr.splice(0, 1);}
-        $('#nprocssl').sparkline(cpuArr, {type: 'bar', barColor: '#99B3FF'});
-        $('#nprocssl').sparkline(cpuArr, {composite: true, fillColor: false, lineColor: 'red'});
-        $('#memsl').sparkline(memArr, {type: 'bar', barColor: '#2e8b57'});
-        $('#memsl').sparkline(memArr, {composite: true, fillColor: false, lineColor: 'red'});
-        $('#etssl').sparkline(etsArr, {type: 'bar', barColor: '#b8860a'});
-        $('#etssl').sparkline(etsArr, {composite: true, fillColor: false, lineColor: 'red'});
+        drawSparkLine(cpuArr, jsonObj.nprocs, '#99B3FF', 'red', ARRMAXLEN, '#nprocssl');
+        drawSparkLine(memArr, jsonObj.memtot, '#2E8B57', 'red', ARRMAXLEN, '#memsl');
+        drawSparkLine(etsArr, jsonObj.ets,    '#B8860A', 'red', ARRMAXLEN, '#etssl');
     });
+}
+
+function drawSparkLine(buffer, point, barColor, lineColor, maxPoints, jqyId) 
+{
+    buffer.push(point);
+    if (buffer.length > maxPoints) {
+        buffer.splice(0, 1);
+    }
+    $(jqyId).sparkline(buffer, {type: 'bar', barColor: barColor});
+    $(jqyId).sparkline(buffer, {composite: true, fillColor: false, lineColor: lineColor});
 }
 
 function setCnodeInfo() {
