@@ -34,16 +34,12 @@
 %% Behaviour Callbacks
 %% ===================================================================
 init({tcp, http}, Req, []) ->
-  labrador:msg_trace(?LINE, process_info(self(), current_function), "init", []),
   {ok, Req, undefined_state};
 init({tcp, http}, Req, [OnlyFile]) ->
   % OnlyFile is like: <<"html/index.html">>	
-  labrador:msg_trace(?LINE, process_info(self(), current_function), "OnlyFile: ~p", [OnlyFile]),
   {ok, Req, OnlyFile}.
 
 handle(Req, undefined_state = State) ->
-  labrador:msg_trace(?LINE, process_info(self(), current_function), "handle", []),
-  labrador:msg_trace(?LINE, process_info(self(), current_function), "path: ~p", [cowboy_req:path(Req)]),
   {Path, Req2} = cowboy_req:path(Req), % Path is like: <<"/js/main.js">>
   send(Req2, Path, State);
 
@@ -56,7 +52,6 @@ handle(Req, OnlyFile = State) ->
 %% ===================================================================
 send(Req, PathBin, State) ->
 	Path = reform_path(PathBin),
-	labrador:msg_trace(?LINE, process_info(self(), current_function), "reformed Path: ~p", [Path]),
 	case labrador_util:file(Path) of
 		{ok, Body} ->
 			Headers = [content_type_header(Path)],
