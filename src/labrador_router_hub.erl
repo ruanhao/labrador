@@ -49,13 +49,13 @@ start_link() ->
 %% Behaviour Callbacks
 %% ------------------------------------------------------------------
 init([]) ->
-    io:format("~nstarting labrador ... ~n", []), 
-    ensure_config_right(),
+    error_logger:info_msg("starting labrador ... ~n~n", []), 
+    init_config(),
     Port           = labrador_util:get_config(port,            40829),
     IP0            = labrador_util:get_config(ip,              "127.0.0.1"),
     NumAcceptors   = labrador_util:get_config(num_acceptors,   16),
     Localhost      = net_adm:localhost(),
-    IP             = localhost_ip(IP0), 
+    IP             = get_ip(IP0), 
 
     %% ------------------------------------------------------------------
     %% Cowboy Specifications
@@ -64,12 +64,10 @@ init([]) ->
     cowboy:start_http(labrador_listener, 
                       NumAcceptors, 
                       [{port, Port}], 
-                      [ 
-                       {env, [ 
-                              {dispatch, cowboy_router:compile(dispatch_rules())} ]} ]),
+                      [{env, [{dispatch, cowboy_router:compile(dispatch_rules())}]}]),
 
-    error_logger:info_msg("labrador is ready on: ~s~n"
-                          "listening on http://~s:~B/~n", [Localhost, IP,Port]),
+    error_logger:info_msg("labrador is rocking on: ~s, "
+                          "please visit http://~s:~B/~n", [Localhost, IP,Port]),
     {ok, #state{}}.
 
 handle_call(_Request, _From, State) -> 
@@ -92,41 +90,34 @@ code_change(_OldVsn, State, _Extra) ->
 %% ------------------------------------------------------------------
 dispatch_rules() ->
     %% {Host, list({Path, Handler, Opts})}
-    [{'_', [{"/",                 labrador_http_static, [<<"html/index.html">>]}, 
-            {"/static/[...]",     labrador_http_static, []}, 
-            {"/ni",         labrador_http_ni, []}, 
-            {"/cni",        labrador_http_cni, []}, 
-            {"/pid",        labrador_http_pid, []}, 
-            {"/etop",       labrador_websocket_etop, []}, 
-            {"/cnis",       labrador_websocket_cni, []}, 
-            {'_',           labrador_http_catchall, []}]}].
+    [{'_', [{"/",               labrador_http_static,    [<<"html/index.html">>]}, 
+            {"/static/[...]",   labrador_http_static,    []}, 
+            {"/ni",             labrador_http_ni,        []}, 
+            {"/cni",            labrador_http_cni,       []}, 
+            {"/pid",            labrador_http_pid,       []}, 
+            {"/etop",           labrador_websocket_etop, []}, 
+            {"/cnis",           labrador_websocket_cni,  []}, 
+            {'_',               labrador_http_catchall,  []}]}].
 
 
-ensure_config_right() -> 
-    labrador:msg_trace(?LINE, process_info(self(), current_function), "app name: ~p", [application:get_application()]),
-    labrador:msg_trace(?LINE, process_info(self(), current_function), "cwd: ~p", [file:get_cwd()]),
+init_config() -> 
+    ConfigList = 
     case file:consult("labrador.config") of 
-        {ok, ConfigList} -> 
-            ets:new(ctable, [set, public, named_table, {keypos, 1}]),
-            [begin 
-                 case K of 
-                     central_node -> 
-                         case net_adm:ping(V) of 
-                             pong -> %% this hidden node has been connected to central node :)
-                                 io:format("Connecting to central node ~w ==========> ok~n", [V]), 
-                                 ets:insert(ctable, {K, V}),
-                                 connect_nodes(V), 
-                                 ets:insert(ctable, {nodes, nodes(connected)});
-                             pang -> 
-                                 io:format("Connecting to central node ~w ==========> fail~n", [V]), 
-                                 exit("Central node unavailable")
-                         end;
-                     _ -> 
-                         ets:insert(ctable, {K, V})
-                 end
-             end || {K, V} <- ConfigList];
-        _ -> 
-            exit("Wrong Config")
+        {ok, CL} -> CL;
+        _        -> exit("Config parsing fails")
+    end,
+    ets:new(ctable, [set, public, named_table, {keypos, 1}]),
+    ets:insert(ctable, {priv, labrador_util:get_priv_path()}),
+    [ets:insert(ctable, {K, V}) || {K, V} <- ConfigList],
+    CNode = labrador_util:get_cnode(),
+    case net_adm:ping(CNode) of 
+        pong -> 
+            io:format("Connecting to central node ~w ==========> ok~n", [CNode]),
+            connect_nodes(CNode),
+            ets:insert(ctable, {nodes, nodes(connected)});
+        pang -> 
+            io:format("Connecting to central node ~w ==========> fail~n", [CNode]),
+            exit("Central node unavailable")
     end.
 
 connect_nodes(CNode) -> 
@@ -150,5 +141,23 @@ connect_nodes([H | T], Fails, Retry) ->
             connect_nodes(T, [H | Fails], Retry)
     end.
 
-localhost_ip(DefaultIP) -> 
+get_ip(DefaultIP) -> 
+    Priv   = labrador_util:get_priv_path(), 
+    Script = filename:join(Priv, "scripts/ship.sh"), 
+    Ref    = make_ref(), 
+    Parent = self(), 
+    Worker = proc_lib:spawn(fun() -> 
+                                Info = os:cmd(Script), 
+                                Parent ! {Ref, Info}
+                            end), 
+    receive 
+        {Ref, Info} -> Info
+    after 5000 -> 
+        %% if msg happens to come here now, i just discard it. 
+        %% no need to flush the process msg queue, because
+        %% the function handle_info/2 can help us.
+        exit(Worker, kill), 
+        DefaultIP
+    end.
+    
     

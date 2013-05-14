@@ -35,17 +35,16 @@
 %% ===================================================================
 init({tcp, http}, Req, []) ->
   {ok, Req, undefined_state};
-init({tcp, http}, Req, [OnlyFile]) ->
-  % OnlyFile is like: <<"html/index.html">>	
-  {ok, Req, OnlyFile}.
+init({tcp, http}, Req, [File]) ->
+  % File is like: <<"html/index.html">>	
+  {ok, Req, File}.
 
 handle(Req, undefined_state = State) ->
   {Path, Req2} = cowboy_req:path(Req), % Path is like: <<"/js/main.js">>
   send(Req2, Path, State);
 
-handle(Req, OnlyFile = State) ->
-  labrador:msg_trace(?LINE, process_info(self(), current_function), "handle", []),
-  send(Req, OnlyFile, State).
+handle(Req, File = State) ->
+  send(Req, File, State).
 
 %% ===================================================================
 %% Inner Functions
@@ -54,7 +53,7 @@ send(Req, PathBin, State) ->
 	Path = reform_path(PathBin),
 	case labrador_util:file(Path) of
 		{ok, Body} ->
-			Headers = [content_type_header(Path)],
+			Headers    = [content_type_header(Path)],
 			{ok, Req2} = cowboy_req:reply(200, Headers, Body, Req),
 			{ok, Req2, State};
 		_ -> %% 404 Not Found
