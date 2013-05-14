@@ -26,7 +26,6 @@
 %% API Functions
 -export([start/0, stop/0, msg_trace/4]).
 
-
 %% ===================================================================
 %% API Functions
 %% ===================================================================
@@ -58,6 +57,3 @@ ensure_started(App) ->
         {error, {already_started, App}} ->
             ok
     end.
-
-
-		

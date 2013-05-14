@@ -44,6 +44,6 @@ start_link() ->
 %% Supervisor Callbacks
 %% ===================================================================
 init([]) ->
-    Http        = ?CHILD(labrador_router_hub, worker),
-    Specs       = [Http],
+    Http  = ?CHILD(labrador_router_hub, worker),
+    Specs = [Http],
     {ok, {{one_for_one, 5, 10}, Specs}}.
