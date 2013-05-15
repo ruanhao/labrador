@@ -28,24 +28,28 @@
 
 -define(CONFIGFILE, 'labrador.config').
 
+-define(FMTOUTOK,      "~-30s ~-20s ==========> ok~n").
+-define(FMTOUTOKNUM,   "~-30s ~-20w ==========> ok~n").
+-define(FMTOUTFAIL,    "~-30s ~-20s ==========> fail~n").
+
 -define(RETRY,      3).
 
 %% ===================================================================
 %% API Functions
 %% ===================================================================
 get_cnode() -> 
-	case ets:lookup(?TABLE, central_node) of 
-		[{central_node, N}] -> N;
-		[] -> 
-			error_logger:error_msg("Miss Central Node Configuration, Use node() Instead", []),
-			node()
-	end.
+    case ets:lookup(?TABLE, central_node) of 
+        [{central_node, N}] -> N;
+        [] -> 
+            error_logger:error_msg("Miss Central Node Configuration, Use node() Instead", []),
+            node()
+    end.
 
 get_config(Key, Default) -> 
-	case ets:lookup(?TABLE, Key) of 
-		[{Key, V}] -> V;
-		[] -> Default
-	end. 
+    case ets:lookup(?TABLE, Key) of 
+        [{Key, V}] -> V;
+        [] -> Default
+    end. 
 
 get_priv_path() -> 
     {ok, Cwd} = file:get_cwd(), 
@@ -55,7 +59,7 @@ get_priv_path() ->
 %% Path should not be like: "/js/main.js"
 file(Path) ->
     Priv = get_config(priv, "."),
-	file:read_file(filename:join(Priv, Path)).
+    file:read_file(filename:join(Priv, Path)).
 
 consult_config() ->
     case file:consult(?CONFIGFILE) of
@@ -68,16 +72,16 @@ create_config_table() ->
 
 inflate_config_table(ConfigList) ->
     ets:insert(?TABLE, {priv, labrador_util:get_priv_path()}),
-    [ets:insert(?TABLE, {K, V}) || {K, V} <- ConfigList].
+    [ ets:insert(?TABLE, {K, V}) || {K, V} <- ConfigList ].
 
 setup_erlang_cluster(CNode) ->
     case net_adm:ping(CNode) of
         pong ->
-            io:format("Connecting to central node ~w ==========> ok~n", [CNode]),
+            io:format(?FMTOUTOK,   ["Connecting to central node", CNode]),
             connect_nodes(CNode),
             ets:insert(?TABLE, {nodes, nodes(connected)});
         pang ->
-            io:format("Connecting to central node ~w ==========> fail~n", [CNode]),
+            io:format(?FMTOUTFAIL, ["Connecting to central node", CNode]),
             exit("Central node unavailable")
     end.
 
@@ -91,15 +95,15 @@ connect_nodes([], Fails, ?RETRY) ->
     io:format("These nodes can not be connected: ~w~n", [Fails]);
 connect_nodes([], Fails, Retry) ->  
     connect_nodes(Fails, [], Retry + 1); 
-connect_nodes([H | T], Fails, Retry) ->  
+connect_nodes([ H | T ], Fails, Retry) ->  
     Flag = net_kernel:connect_node(H),
     case Flag of  
         true ->  
-            io:format("Connecting to node ~w ==========> ok~n", [H]), 
+            io:format(?FMTOUTOK,   ["Connecting to node", H]), 
             connect_nodes(T, Fails, Retry);
         _    ->  
-            io:format("Connecting to node ~w ==========> fail~n", [H]), 
-            connect_nodes(T, [H | Fails], Retry)
+            io:format(?FMTOUTFAIL, ["Connecting to node", H]), 
+            connect_nodes(T, [ H | Fails ], Retry)
     end.
 
 get_ip(DefaultIP) ->
@@ -120,3 +124,13 @@ get_ip(DefaultIP) ->
         exit(Worker, kill), 
         DefaultIP
     end.
+
+set_cluster_ticktime() -> 
+    ClusterTick = rpc:call(get_cnode(), net_kernel, get_net_ticktime, []), 
+    LocalTick   = case ClusterTick of 
+                      {ongoing_change_to, NT} -> NT; 
+                      ignored                 -> 60;
+                      NT                      -> NT
+                  end, 
+    net_kernel:set_net_ticktime(LocalTick), 
+    io:format(?FMTOUTOKNUM, ["Seting net tick time to", LocalTick]).

@@ -22,9 +22,9 @@
 
 -module(labrador_http_catchall).
 
--define(PAGENOTFOUND, "html/404.html").
-
 -behaviour(cowboy_http_handler).
+
+-define(PAGENOTFOUND, "html/404.html").
 
 %% Behaviour Callbacks
 -export([init/3, handle/2, terminate/3]).
@@ -36,14 +36,14 @@ init({tcp, http}, Req, _Opts) ->
     {ok, Req, undefined_state}.
 
 handle(Req, State) ->
-	case labrador:file(?PAGENOTFOUND) of 
-				{ok, Body} -> 
-					{ok, Req2} = cowboy_req:reply(200, [{<<"Content-Type">>, <<"text/html">>}], Body, Req),
-					{ok, Req2, State};
-				_ ->	%% No 404 Not Found Page 
-					{ok, Req2} = cowboy_req:reply(404, [], <<"<h1>404</h1>">>, Req),
-					{ok, Req2, State}
-			end.
+    case labrador:file(?PAGENOTFOUND) of 
+        {ok, Body} -> 
+            {ok, Req2} = cowboy_req:reply(200, [{<<"Content-Type">>, <<"text/html">>}], Body, Req),
+            {ok, Req2, State};
+        _ ->    %% No 404 Not Found Page 
+            {ok, Req2} = cowboy_req:reply(404, [], <<"<h1>404</h1>">>, Req),
+            {ok, Req2, State}
+    end.
 
 terminate(_Reason, _Req, _State) ->
     ok.

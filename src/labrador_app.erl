@@ -32,7 +32,7 @@
 %% API Functions
 %% ===================================================================
 start(_StartType, _StartArgs) -> 
-	labrador_sup:start_link().
+    labrador_sup:start_link().
 
 stop(_State) ->
     ok.

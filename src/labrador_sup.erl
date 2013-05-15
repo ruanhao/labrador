@@ -23,10 +23,10 @@
 
 -module(labrador_sup).
 
+-behaviour(supervisor).
+
 %% Helper Macro For Declaring Children Of Supervisor
 -define(CHILD(I, Type), {I, {I, start_link, []}, permanent, 5000, Type, [I]}).
-
--behaviour(supervisor).
 
 %% Behaviour Callbacks
 -export([start_link/0]).
@@ -38,7 +38,7 @@
 %% API functions
 %% ===================================================================
 start_link() -> 
-	supervisor:start_link({local, ?MODULE}, ?MODULE, []).
+    supervisor:start_link({local, ?MODULE}, ?MODULE, []).
 
 %% ===================================================================
 %% Supervisor Callbacks

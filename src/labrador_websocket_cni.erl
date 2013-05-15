@@ -23,13 +23,13 @@
 
 -module(labrador_websocket_cni).
 
--include("http.hrl").
-
--define(INTERVAL, 2000).
-
 -behaviour(cowboy_websocket_handler).
 
 -behaviour(cowboy_http_handler).
+
+-include("http.hrl").
+
+-define(INTERVAL, 2000).
 
 %% Behaviour Callbacks (cowboy_http_handler)
 -export([init/3, handle/2, terminate/3]).
@@ -53,39 +53,29 @@ terminate(_Reason, _Req, _State) ->
 %% Behaviour Callbacks (cowboy_websocket_handler)
 %% ===================================================================
 websocket_init(_TransportName, Req, _Opts) ->
-	timer:send_interval(?INTERVAL, central_node_info),
+    timer:send_interval(?INTERVAL, central_node_info),
     {ok, Req, undefined_state}.
 
 websocket_info(central_node_info, Req, State) -> 
-	Reply = jsx:term_to_json(update()),
+    Reply = jsx:term_to_json(update()),
     {reply, {text, Reply}, Req, State};
 websocket_info(Info, Req, State) ->
     io:format("Unhandled msg to ~p ~p\n", [?MODULE, Info]),
     {ok, Req, State}.
 
-	
+    
 websocket_terminate(_Reason, _Req, _State) -> 
-	ok.
+    ok.
 
 websocket_handle(_Msg, Req, State) ->
-	{ok, Req, State}.
+    {ok, Req, State}.
 
 %% ===================================================================
 %% Inner Functions
 %% ===================================================================
 update() -> 
-	CNode = labrador_util:get_cnode(),
-	NProcs = length(rpc:call(CNode, erlang, processes, [])), 
-	MemTot = rpc:call(CNode, erlang, memory, [total]),
-	MemEts = rpc:call(CNode, erlang, memory, [ets]),
-%% 	Pid = spawn_link(CNode,observer_backend,etop_collect,[self()]),
-%% 	EtopInfo = receive 
-%% 				   {Pid,I} -> I
-%% 				   after 1000 -> exit(connection_lost)
-%% 			   end,
-%% 	#etop_info{wall_clock = {_, Wc}, 
-%% 			   runtime = {_, Rt}} = EtopInfo,
-%% 	Cpu = try round(100*Rt/Wc)
-%% 		  catch _:_ -> 0
-%% 		  end,
-	[{nprocs, NProcs}, {memtot, MemTot}, {ets, MemEts}].
+    CNode  = labrador_util:get_cnode(),
+    NProcs = length(rpc:call(CNode, erlang, processes, [])), 
+    MemTot = rpc:call(CNode, erlang, memory, [total]),
+    MemEts = rpc:call(CNode, erlang, memory, [ets]),
+    [{nprocs, NProcs}, {memtot, MemTot}, {ets, MemEts}].

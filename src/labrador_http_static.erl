@@ -23,9 +23,9 @@
 
 -module(labrador_http_static).
 
--define(PAGENOTFOUND, "html/404.html").
-
 -behaviour(cowboy_http_handler).
+
+-define(PAGENOTFOUND, "html/404.html").
 
 %% Behaviour Callbacks
 -export([init/3, handle/2, terminate/3]).
@@ -34,62 +34,62 @@
 %% Behaviour Callbacks
 %% ===================================================================
 init({tcp, http}, Req, []) ->
-  {ok, Req, undefined_state};
+    {ok, Req, undefined_state};
 init({tcp, http}, Req, [File]) ->
-  % File is like: <<"html/index.html">>	
-  {ok, Req, File}.
+    %% File is like: <<"html/index.html">> 
+    {ok, Req, File}.
 
 handle(Req, undefined_state = State) ->
-  {Path, Req2} = cowboy_req:path(Req), % Path is like: <<"/js/main.js">>
-  send(Req2, Path, State);
+    {Path, Req2} = cowboy_req:path(Req), % Path is like: <<"/js/main.js">>
+    send(Req2, Path, State);
 
 handle(Req, File = State) ->
-  send(Req, File, State).
+    send(Req, File, State).
 
 %% ===================================================================
 %% Inner Functions
 %% ===================================================================
 send(Req, PathBin, State) ->
-	Path = reform_path(PathBin),
-	case labrador_util:file(Path) of
-		{ok, Body} ->
-			Headers    = [content_type_header(Path)],
-			{ok, Req2} = cowboy_req:reply(200, Headers, Body, Req),
-			{ok, Req2, State};
-		_ -> %% 404 Not Found
-			case labrador_util:file(?PAGENOTFOUND) of 
-				{ok, Body} -> 
-					{ok, Req2} = cowboy_req:reply(200, [{<<"Content-Type">>, <<"text/html">>}], Body, Req),
-					{ok, Req2, State};
-				_ ->	%% No 404 Not Found Page 
-					{ok, Req2} = cowboy_req:reply(404, [], <<"<h1>404</h1>">>, Req),
-					{ok, Req2, State}
-			end
-	end.
+    Path = reform_path(PathBin),
+    case labrador_util:file(Path) of
+        {ok, Body} ->
+            Headers    = [content_type_header(Path)],
+            {ok, Req2} = cowboy_req:reply(200, Headers, Body, Req),
+            {ok, Req2, State};
+        _ -> %% 404 Not Found
+            case labrador_util:file(?PAGENOTFOUND) of 
+                {ok, Body} -> 
+                    {ok, Req2} = cowboy_req:reply(200, [{<<"Content-Type">>, <<"text/html">>}], Body, Req),
+                    {ok, Req2, State};
+                _ ->    %% No 404 Not Found Page 
+                    {ok, Req2} = cowboy_req:reply(404, [], <<"<h1>404</h1>">>, Req),
+                    {ok, Req2, State}
+            end
+    end.
 
 reform_path(PathBin) -> 
-	Path = binary_to_list(PathBin),
-	Static = "/static",
-	Idx = string:str(Path, Static),
-	P = 
-		case Idx of 
-			0 -> Path;
-			1 -> string:sub_string(Path, 1 + length(Static))
-		end,
-	trim_slash(P).
+    Path   = binary_to_list(PathBin),
+    Static = "/static",
+    Idx    = string:str(Path, Static),
+    P      = 
+        case Idx of 
+            0 -> Path;
+            1 -> string:sub_string(Path, 1 + length(Static))
+        end,
+    trim_slash(P).
 
-trim_slash([$/ | T]) -> 
-	T;
+trim_slash([ $/ | T ]) -> 
+    T;
 trim_slash(Path) -> 
-	Path.
+    Path.
 
 content_type_header(FullPath) -> 
-	Ext = filename:extension(FullPath), 
-	case Ext of 
-		".css" -> {<<"Content-Type">>, <<"text/css">>};
-		".js"  -> {<<"Content-Type">>, <<"text/javascript">>};
-		_ 	   -> {<<"Content-Type">>, <<"text/html">>}
-	end.
+    Ext = filename:extension(FullPath), 
+    case Ext of 
+        ".css" -> {<<"Content-Type">>, <<"text/css">>};
+        ".js"  -> {<<"Content-Type">>, <<"text/javascript">>};
+        _      -> {<<"Content-Type">>, <<"text/html">>}
+    end.
 
 terminate(_Reason, _Req, _State) ->
   ok.

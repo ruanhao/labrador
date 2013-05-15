@@ -31,18 +31,18 @@
 %% Behaviour Callbacks
 %% ===================================================================
 init({tcp, http}, Req, _Opts) ->
-	{ok, Req, undefined_state}.
+    {ok, Req, undefined_state}.
 
 handle(Req, State) ->
-	CNode = labrador_util:get_cnode(),
-	LProcs = rpc:call(CNode, erlang, system_info, [logical_processors]), 
-	OtpRls = rpc:call(CNode, erlang, system_info, [otp_release]), 
-	SysArch = rpc:call(CNode, erlang, system_info, [system_architecture]),
-	CNodeInfo = [{cnode, CNode}, {lp, LProcs}, {otpr, OtpRls}, {sa, SysArch}],
-	Body = jsx:term_to_json(CNodeInfo),
-	Headers = [{<<"Content-Type">>, <<"application/json">>}],
-	{ok, Req2} = cowboy_req:reply(200, Headers, Body, Req),
-	{ok, Req2, State}.
+    CNode      = labrador_util:get_cnode(),
+    LProcs     = rpc:call(CNode, erlang, system_info, [logical_processors]), 
+    OtpRls     = rpc:call(CNode, erlang, system_info, [otp_release]), 
+    SysArch    = rpc:call(CNode, erlang, system_info, [system_architecture]),
+    CNodeInfo  = [{cnode, CNode}, {lp, LProcs}, {otpr, OtpRls}, {sa, SysArch}],
+    Body       = jsx:term_to_json(CNodeInfo),
+    Headers    = [{<<"Content-Type">>, <<"application/json">>}],
+    {ok, Req2} = cowboy_req:reply(200, Headers, Body, Req),
+    {ok, Req2, State}.
 
 terminate(_Reason, _Req, _State) ->
-	ok.
+    ok.

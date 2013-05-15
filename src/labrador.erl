@@ -24,28 +24,21 @@
 -module(labrador).
 
 %% API Functions
--export([start/0, stop/0, msg_trace/4]).
+-export([start/0, stop/0]).
 
 %% ===================================================================
 %% API Functions
 %% ===================================================================
 start() ->
-	ensure_started(crypto),
-	ensure_started(sasl),
-	ensure_started(ranch),
+    ensure_started(crypto),
+    ensure_started(sasl),
+    ensure_started(ranch),
     ensure_started(cowboy),
     ensure_started(jsx),
     application:start(labrador).
 
 stop() ->
     application:stop(labrador).
-
-msg_trace(LineNum, ProcInfo, DebugStr, DebugVals) ->
-  ModName = element(1, element(2, ProcInfo)),
-  FunName = element(2, element(2, ProcInfo)),
-  FinalFormatStr = "Fun: " ++ atom_to_list(FunName) ++ " -- " ++ DebugStr ++ " -- #Module: ~p, @Line: ~p~n",
-  Parameters = DebugVals ++ [ModName, LineNum],                                             
-  io:format(FinalFormatStr, Parameters). 
 
 %% ===================================================================
 %% Inner Functions

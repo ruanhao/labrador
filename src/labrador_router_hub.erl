@@ -102,4 +102,7 @@ init_config() ->
     ConfigList = labrador_util:consult_config(),
     labrador_util:create_config_table(), 
     labrador_util:inflate_config_table(ConfigList), 
+    %% configuration table should be inflated first,
+    %% then we can do other setup
+    labrador_util:set_cluster_ticktime(), 
     labrador_util:setup_erlang_cluster(labrador_util:get_cnode()).
