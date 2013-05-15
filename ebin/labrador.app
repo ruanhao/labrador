@@ -1,5 +1,5 @@
 {application,labrador,
-             [{description,"GUI Process Analysis Tool For Monitoring Dallas Erlang Cluster"},
+             [{description,"Web Based Process Analysis Tool For Monitoring Erlang Cluster"},
               {vsn,"2.1"},
               {registered,[]},
               {applications,[kernel,stdlib,cowboy,jsx]},
