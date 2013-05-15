@@ -23,15 +23,13 @@
 
 -module(labrador_router_hub).
 
--define(SERVER, ?MODULE).
-
--define(DFLTIP, "127.0.0.1").
-
--define(RETRY, 3).
+-behaviour(gen_server).
 
 -record(state, {}).
 
--behaviour(gen_server).
+-define(SERVER, ?MODULE).
+
+-define(DFLTIP, "127.0.0.1").
 
 %% API Function
 -export([start_link/0]).
@@ -52,10 +50,10 @@ init([]) ->
     error_logger:info_msg("starting labrador ... ~n~n", []), 
     init_config(),
     Port           = labrador_util:get_config(port,            40829),
-    IP0            = labrador_util:get_config(ip,              "127.0.0.1"),
+    IP0            = labrador_util:get_config(ip,              ?DFLTIP),
     NumAcceptors   = labrador_util:get_config(num_acceptors,   16),
+    IP             = labrador_util:get_ip(IP0), 
     Localhost      = net_adm:localhost(),
-    IP             = get_ip(IP0), 
 
     %% ------------------------------------------------------------------
     %% Cowboy Specifications
@@ -101,63 +99,7 @@ dispatch_rules() ->
 
 
 init_config() -> 
-    ConfigList = 
-    case file:consult("labrador.config") of 
-        {ok, CL} -> CL;
-        _        -> exit("Config parsing fails")
-    end,
-    ets:new(ctable, [set, public, named_table, {keypos, 1}]),
-    ets:insert(ctable, {priv, labrador_util:get_priv_path()}),
-    [ets:insert(ctable, {K, V}) || {K, V} <- ConfigList],
-    CNode = labrador_util:get_cnode(),
-    case net_adm:ping(CNode) of 
-        pong -> 
-            io:format("Connecting to central node ~w ==========> ok~n", [CNode]),
-            connect_nodes(CNode),
-            ets:insert(ctable, {nodes, nodes(connected)});
-        pang -> 
-            io:format("Connecting to central node ~w ==========> fail~n", [CNode]),
-            exit("Central node unavailable")
-    end.
-
-connect_nodes(CNode) -> 
-    Nodes = rpc:call(CNode, erlang, nodes, []), 
-    connect_nodes(Nodes, [], 0).
-
-connect_nodes([], [], _) -> 
-    io:format("All nodes connected~n", []);
-connect_nodes([], Fails, ?RETRY) -> 
-    io:format("These nodes can not be connected: ~w~n", [Fails]);
-connect_nodes([], Fails, Retry) -> 
-    connect_nodes(Fails, [], Retry + 1); 
-connect_nodes([H | T], Fails, Retry) -> 
-    Flag = net_kernel:connect_node(H),
-    case Flag of 
-        true -> 
-            io:format("Connecting to node ~w ==========> ok~n", [H]), 
-            connect_nodes(T, Fails, Retry);
-        _    -> 
-            io:format("Connecting to node ~w ==========> fail~n", [H]), 
-            connect_nodes(T, [H | Fails], Retry)
-    end.
-
-get_ip(DefaultIP) -> 
-    Priv   = labrador_util:get_priv_path(), 
-    Script = filename:join(Priv, "scripts/ship.sh"), 
-    Ref    = make_ref(), 
-    Parent = self(), 
-    Worker = proc_lib:spawn(fun() -> 
-                                Info = os:cmd(Script), 
-                                Parent ! {Ref, Info}
-                            end), 
-    receive 
-        {Ref, Info} -> Info
-    after 5000 -> 
-        %% if msg happens to come here now, i just discard it. 
-        %% no need to flush the process msg queue, because
-        %% the function handle_info/2 can help us.
-        exit(Worker, kill), 
-        DefaultIP
-    end.
-    
-    
+    ConfigList = labrador_util:consult_config(),
+    labrador_util:create_config_table(), 
+    labrador_util:inflate_config_table(ConfigList), 
+    labrador_util:setup_erlang_cluster(labrador_util:get_cnode()).
