@@ -28,9 +28,9 @@
 
 -define(CONFIGFILE, 'labrador.config').
 
--define(FMTOUTOK,      "~-30s ~-20s ==========> ok~n").
--define(FMTOUTOKNUM,   "~-30s ~-20w ==========> ok~n").
--define(FMTOUTFAIL,    "~-30s ~-20s ==========> fail~n").
+-define(FMTOUTOK,      "~-30s ~-30s ==========> ok~n").
+-define(FMTOUTOKNUM,   "~-30s ~-30w ==========> ok~n").
+-define(FMTOUTFAIL,    "~-30s ~-30s ==========> fail~n").
 
 -define(RETRY,      3).
 
