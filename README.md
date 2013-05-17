@@ -70,11 +70,17 @@ Acknowledgement
 ---------------
 [SMELLS LIKE BEAM SPIRIT]
 
+Do you like Labrador
+--------------------
+If you appreciate Labrador, how about a cup of coffee?  
+[![Donate]](http://goo.gl/Q42gX)
+
 
   [Bigwig]:  https://github.com/beamspirit/bigwig.git
   [Cowboy]:  https://github.com/extend/cowboy.git
   [SMELLS LIKE BEAM SPIRIT]:  http://www.metabrew.com/article/bigwig-erlang-webtool-spawnfest
   [Chrome]:  http://www.google.com/chrome/
   [FireFox]:  http://www.mozilla.org/en-US/firefox/
+  [Donate]:  https://www.paypal.com/en_US/i/btn/btn_donate_SM.gif
   [1]:  https://raw.github.com/ruanhao/labrador/master/priv/img/labrador_overview.png
   [2]:  https://raw.github.com/ruanhao/labrador/master/priv/img/process_info.png
