@@ -28,6 +28,7 @@ For each node other than the central node, do:
 >     net_kernel:connect_node('malamute@Hao-Ruans-Mac').
 
 ###Download Labrador
+[rebar] is required to build the project:
 >     haoruan@Hao-Ruans-Mac:~% git clone git@github.com:ruanhao/labrador.git
 >     haoruan@Hao-Ruans-Mac:~% cd labrador
 >     haoruan@Hao-Ruans-Mac:labrador% rebar get-deps
@@ -81,6 +82,7 @@ If you appreciate Labrador, how about a cup of coffee?
   [SMELLS LIKE BEAM SPIRIT]:  http://www.metabrew.com/article/bigwig-erlang-webtool-spawnfest
   [Chrome]:  http://www.google.com/chrome/
   [FireFox]:  http://www.mozilla.org/en-US/firefox/
+  [rebar]:  https://github.com/basho/rebar.git
   [Donate]:  https://www.paypal.com/en_US/i/btn/btn_donate_SM.gif
   [1]:  https://raw.github.com/ruanhao/labrador/master/priv/img/labrador_overview.png
   [2]:  https://raw.github.com/ruanhao/labrador/master/priv/img/process_info.png
