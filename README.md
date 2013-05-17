@@ -73,7 +73,7 @@ Acknowledgement
 Do you like Labrador
 --------------------
 If you appreciate Labrador, how about a cup of coffee?  
-[![Donate]](http://goo.gl/Q42gX)
+[![Donate]](http://goo.gl/bk94M)
 
 
   [Bigwig]:  https://github.com/beamspirit/bigwig.git
