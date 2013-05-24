@@ -1,10 +1,11 @@
 %%%----------------------------------------------------------------------
 %%% File      : labrador_websocket_cni.erl
 %%% Author    : ryan.ruan@ericsson.com
-%%%             lishuaihenu@gmail.com
+%%% Modifier  : lishuaihenu@gmail.com
 %%% Purpose   : Continuously generate central node information which is 
 %%%             supplied to Sparkline.
-%%% Created   : Apr 4, 2013
+%%% Created   : Apr  4, 2013
+%%% Modified  : May 24, 2013
 %%%----------------------------------------------------------------------
 
 %%%----------------------------------------------------------------------
@@ -76,10 +77,9 @@ websocket_handle(_Msg, Req, State) ->
 %% ===================================================================
 update() -> 
     CNode  = labrador_util:get_cnode(),
-    NProcs = rpc:call(CNode, erlang, apply,
-		      [fun() ->
-			       length(erlang:processes())
-		       end, []]),
+    %% we should minus 1 here, because the process used by rpc call
+    %% is also taken into account.
+    NProcs = rpc:call(CNode, erlang, system_info, [process_count]) - 1,
     MemTot = rpc:call(CNode, erlang, memory, [total]),
     MemEts = rpc:call(CNode, erlang, memory, [ets]),
     [{nprocs, NProcs}, {memtot, MemTot}, {ets, MemEts}].
