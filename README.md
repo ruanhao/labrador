@@ -67,6 +67,13 @@ Note
 You'd better use navigator that is Websocket supported.  
 It is ok to use [Chrome] and [FireFox].
 
+Coming Soon
+-----------
+  * Interface optimization
+  * Support logging file
+  * Support tracing function
+  * And so on
+
 Acknowledgement
 ---------------
 [SMELLS LIKE BEAM SPIRIT]
