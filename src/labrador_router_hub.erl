@@ -47,40 +47,40 @@ start_link() ->
 %% Behaviour Callbacks
 %% ------------------------------------------------------------------
 init([]) ->
-    error_logger:info_msg("starting labrador ... ~n~n", []), 
+    error_logger:info_msg("starting labrador ... ~n~n", []),
     init_config(),
     Port           = labrador_util:get_config(port,            40829),
-    IP0            = labrador_util:get_config(ip,              ?DFLTIP),
+    %% IP0            = labrador_util:get_config(ip,              ?DFLTIP),
     NumAcceptors   = labrador_util:get_config(num_acceptors,   16),
-    IP             = labrador_util:get_ip(IP0), 
+    %% IP             = labrador_util:get_ip(IP0),
     Localhost      = net_adm:localhost(),
 
     %% ------------------------------------------------------------------
     %% Cowboy Specifications
-    %% cowboy:start_http(Ref, NbAcceptors, TransOpts, ProtoOpts) 
+    %% cowboy:start_http(Ref, NbAcceptors, TransOpts, ProtoOpts)
     %% ------------------------------------------------------------------
-    cowboy:start_http(labrador_listener, 
-                      NumAcceptors, 
-                      [{port, Port}], 
+    cowboy:start_http(labrador_listener,
+                      NumAcceptors,
+                      [{port, Port}],
                       [{env, [{dispatch, cowboy_router:compile(dispatch_rules())}]}]),
 
     error_logger:info_msg("labrador is rocking on: ~s, "
-                          "please visit http://~s:~B/~n", [Localhost, IP,Port]),
+                          "please visit http://~s:~B/~n", [Localhost, Localhost, Port]),
     {ok, #state{}}.
 
-handle_call(_Request, _From, State) -> 
+handle_call(_Request, _From, State) ->
     {noreply, ok, State}.
 
-handle_cast(_Msg, State) -> 
+handle_cast(_Msg, State) ->
     {noreply, State}.
 
-handle_info(_Info, State) -> 
+handle_info(_Info, State) ->
     {noreply, State}.
 
-terminate(_Reason, _State) -> 
+terminate(_Reason, _State) ->
     ok.
 
-code_change(_OldVsn, State, _Extra) -> 
+code_change(_OldVsn, State, _Extra) ->
     {ok, State}.
 
 %% ------------------------------------------------------------------
@@ -88,21 +88,21 @@ code_change(_OldVsn, State, _Extra) ->
 %% ------------------------------------------------------------------
 dispatch_rules() ->
     %% {Host, list({Path, Handler, Opts})}
-    [{'_', [{"/",               labrador_http_static,    [<<"html/index.html">>]}, 
-            {"/static/[...]",   labrador_http_static,    []}, 
-            {"/ni",             labrador_http_ni,        []}, 
-            {"/cni",            labrador_http_cni,       []}, 
-            {"/pid",            labrador_http_pid,       []}, 
-            {"/etop",           labrador_websocket_etop, []}, 
-            {"/cnis",           labrador_websocket_cni,  []}, 
+    [{'_', [{"/",               labrador_http_static,    [<<"html/index.html">>]},
+            {"/static/[...]",   labrador_http_static,    []},
+            {"/ni",             labrador_http_ni,        []},
+            {"/cni",            labrador_http_cni,       []},
+            {"/pid",            labrador_http_pid,       []},
+            {"/etop",           labrador_websocket_etop, []},
+            {"/cnis",           labrador_websocket_cni,  []},
             {'_',               labrador_http_catchall,  []}]}].
 
 
-init_config() -> 
+init_config() ->
     ConfigList = labrador_util:consult_config(),
-    labrador_util:create_config_table(), 
-    labrador_util:inflate_config_table(ConfigList), 
+    labrador_util:create_config_table(),
+    labrador_util:inflate_config_table(ConfigList),
     %% configuration table should be inflated first,
     %% then we can do other setup
     labrador_util:setup_erlang_cluster(labrador_util:get_cnode()),
-    labrador_util:set_cluster_ticktime(). 
+    labrador_util:set_cluster_ticktime().
